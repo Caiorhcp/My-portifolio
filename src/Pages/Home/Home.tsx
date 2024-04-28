@@ -1,10 +1,17 @@
+
+import NavBar from "../../Components/NavBar/NavBar"
+import Hero from "./sections/Hero/Hero"
+
+
 const Home = () => {
 
+
     return (
-      <>
-      Home
-      </>
+        <>
+            <NavBar />
+            <Hero />
+        </>
     )
-  }
-  
-  export default Home
+}
+
+export default Home
