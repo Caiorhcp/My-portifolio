@@ -18,6 +18,7 @@ const About = () => {
     
     const StyledImg = styled("img")(({theme}) => ({
         width: "100%",
+        borderRadius:"23%",
         [theme.breakpoints.up('xs')]: { // <= mobile
             display:"none"
         },
@@ -36,7 +37,7 @@ const About = () => {
                     <Grid item xs={12} sm={6}>
                         <TextContainer>
                             <Typography color="primary.contrastText" variant="h3" gutterBottom>
-                                About
+                                About Me
                             </Typography>
                             <Typography color="primary.contrastText" variant="body1">
                                 My journey in the world of technology is quite recent. Previously, I was studying Economics, but during the pandemic, an old passion resurfaced. During my school days, I had my first contact with programming in an activity on GameMaker, where I could understand the basics of programming logic for the first time. Since then, I've had an interest in technology, although I later followed a different path.
