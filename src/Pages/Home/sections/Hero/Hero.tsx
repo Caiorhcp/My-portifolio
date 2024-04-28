@@ -12,7 +12,15 @@ const Hero= () => {
         backgroundColor: theme.palette.primary.main,
         height:"100vh",
         display:"flex",
-        alignItems:"center"
+        alignItems:"center",
+
+        [theme.breakpoints.up('xs')]: { // <= mobile
+            paddingTop:"100px"
+        },
+
+        [theme.breakpoints.up('md')]: { // >= mobile
+            paddingTop:"0px"
+        }
 
     }))
 
@@ -33,7 +41,7 @@ const Hero= () => {
                     <Box position="absolute" width={"100%"} top={-100} right={0}>
                 <AnimatedBackground/>
                 </Box>
-                    <Box position="absolute" textAlign={"center"}> 
+                    <Box position="relative" textAlign={"center"}> 
                     <StyledImg src={AvatarImg}/>
                     </Box>
                 </Box>
