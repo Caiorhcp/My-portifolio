@@ -1,15 +1,27 @@
-import { Box, Container, Grid, Typography, styled } from "@mui/material"
+import { Box, Container, Grid, Typography, keyframes, styled } from "@mui/material"
 import AvatarImg from "../../../../assets/Images/AvatarImg.jpg"
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
 import StyledButton from "../../../../Components/StyledButton/StyledButton";
-
 import { AnimatedBackground } from "../../../../Components/AnimatedBackground/AnimatedBackground";
+
+const moveAnimation = keyframes`
+  0% {
+    transform: translateX(-8px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  100% {
+    transform: translateX(-8px);
+  }
+`;
+
 
 const Hero= () => {
 
     const StyledHero = styled("div")(({theme})=> ({
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: "#191924",
         height:"100vh",
         display:"flex",
         alignItems:"center",
@@ -27,7 +39,8 @@ const Hero= () => {
     const StyledImg = styled("img")(({ theme }) => ({
         width: "75%",
         borderRadius: "50%",
-        border: `1px solid ${theme.palette.primary.contrastText}`
+        border: `1px solid ${theme.palette.primary.contrastText}`,
+        animation: `${moveAnimation} 10s ease-in-out infinite`,
     }))
 
 

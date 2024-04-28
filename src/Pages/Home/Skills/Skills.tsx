@@ -1,22 +1,68 @@
 import { Container, Grid, Typography, styled } from "@mui/material";
+import { keyframes } from "@emotion/react";
 
+const pulseAnimation = keyframes`
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+const techBackgroundAnimation = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
 
 const Skills = () => {
 
-    const StyledSkills = styled("div")(({ theme })=> ({
-        backgroundColor: theme.palette.primary.dark,
-        height: "81vh",
-        display: "flex",
+    const StyledSkills = styled("div")(()=> ({
+        position: "relative",
+        overflow: "hidden",
+        backgroundColor: "#191924",
+        height: "120vh",
         width:"100%",
+        boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
+        animation: `${techBackgroundAnimation} 20s linear infinite alternate`,
 
+
+
+
+
+        
     }));
 
     const TextContainer = styled("div")(({ theme })=> ({
-
-        textAlign: "center",    
-        backgroundColor:theme.palette.primary.dark,
+        textAlign: "center",
+        padding: "20px",
+        margin:"10px",
+        borderRadius: "50px",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+        transition: "background-color 0.3s, transform 0.3s",
+        "&:hover": {
+        backgroundColor: theme.palette.secondary.main,
+        transform: "scale(1.05)",
+        },
+        animation: `${pulseAnimation} 2s infinite`,
     }));
-    
+
+    const InnerGrid = styled(Grid)({
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap:"1.5px",
+    });
 
     return (
         <StyledSkills>
@@ -24,73 +70,107 @@ const Skills = () => {
                 <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <TextContainer>
-                        <Typography color="primary.contrastText" variant="h3" gutterBottom>
+                            <Typography color="primary.contrastText" variant="h3" gutterBottom>
                                 Skills
                             </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                HTML
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                CSS
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                SASS
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                JAVASCRIPT
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                TYPESCRIPT
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                REACT
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                MYSQL
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                TAILWIND
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                GIT AND GITHUB
-                            </Typography>
-                        
+                            <InnerGrid container direction="column" spacing={1}>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        HTML
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        CSS
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        SASS
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        JAVASCRIPT
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        TYPESCRIPT
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        REACT
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        MYSQL
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        TAILWIND
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        GIT AND GITHUB
+                                    </Typography>
+                                </Grid>
+                            </InnerGrid>
                         </TextContainer>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextContainer>
-                        <Typography color="primary.contrastText" variant="h3" gutterBottom>
+                            <Typography color="primary.contrastText" variant="h3" gutterBottom>
                                 Interpersonal
                             </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Agile Methodology
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Leadership
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Flexibility
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Active listening.
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Empathy
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Motivation
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Communication
-                            </Typography>
-                            <Typography color="primary.contrastText" variant="body1">
-                                Teamwork
-                            </Typography>
-                        
+                            <InnerGrid container direction="column" spacing={1}>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Agile Methodology
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Leadership
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Flexibility
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Active listening.
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Empathy
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Motivation
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Communication
+                                    </Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Typography color="primary.contrastText" variant="body1">
+                                        Teamwork
+                                    </Typography>
+                                </Grid>
+                            </InnerGrid>
                         </TextContainer>
                     </Grid>
-                    
-                    
                 </Grid>
             </Container>
         </StyledSkills>
