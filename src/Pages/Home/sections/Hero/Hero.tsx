@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Container, Grid, Typography, keyframes, styled } from "@mui/material"
 import AvatarImg from "../../../../assets/Images/AvatarImg.jpg"
 import DownloadIcon from '@mui/icons-material/Download';

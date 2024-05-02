@@ -55,7 +55,7 @@ const About = () => {
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextContainer>
-              <Typography color="primary.contrastText" variant="h3" gutterBottom marginTop={"20px"}>
+              <Typography color="primary.contrastText" variant="h3" gutterBottom>
                 About Me
               </Typography>
               <Typography color="primary.contrastText" variant="body1">
