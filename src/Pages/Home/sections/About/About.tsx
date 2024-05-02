@@ -50,12 +50,12 @@ const StyledImg = styled("img")(({ theme }) => ({
 
 const About = () => {
   return (
-    <StyledAbout>
+    <StyledAbout id="about">
       <Container maxWidth="md">
         <Grid container justifyContent="center" spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextContainer>
-              <Typography color="primary.contrastText" variant="h3" gutterBottom>
+              <Typography color="primary.contrastText" variant="h3" gutterBottom marginTop={"20px"}>
                 About Me
               </Typography>
               <Typography color="primary.contrastText" variant="body1">

@@ -3,6 +3,7 @@ import SASSImg from "../../../../assets/Images/SASSImg.png";
 import CalculatorImg from "../../../../assets/Images/CalculatorImg.png";
 import UnderCImg from "../../../../assets/Images/UnderCImg.png";
 
+
 const Projects = () => {
   const StyledProjects = styled("div")(() => ({
     backgroundColor: "#191924",
@@ -12,6 +13,13 @@ const Projects = () => {
     alignItems: "center",
     justifyContent: "center",
   }));
+
+  
+  const StyledProjects2 = styled("div")(() => ({
+    backgroundColor: "#191924",
+    minHeight: "60px",
+  }));
+
 
   const StyledImg = styled("img")(() => ({
     width: "100%",
@@ -39,9 +47,12 @@ const Projects = () => {
   }));
 
   return (
+    <> 
+    <StyledProjects2 id="projects">
+    </StyledProjects2>
     <StyledProjects>
-      <Container maxWidth="lg">
-        <Typography color="primary.contrastText" variant="h1" textAlign="center" pb={2}>
+      <Container maxWidth="lg" >
+        <Typography color="primary.contrastText" variant="h1" textAlign="center" pb={2} >
           Projects
         </Typography>
         <Grid container spacing={2} justifyContent="center">
@@ -69,6 +80,7 @@ Design of a responsive landing page, made using SASS to ensure a coherent design
         </Grid>
       </Container>
     </StyledProjects>
+    </>
   );
 };
 

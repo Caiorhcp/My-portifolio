@@ -1,5 +1,5 @@
 
-import NavBar from "../../Components/NavBar/NavBar"
+import ResponsiveAppBar from "../../Components/NavBar/NavBar"
 import Footer from "./Footer/Footer"
 import Skills from "./Skills/Skills"
 import About from "./sections/About/About"
@@ -12,7 +12,7 @@ const Home = () => {
 
     return (
         <>
-            <NavBar />
+            <ResponsiveAppBar/>
             <Hero/>
             <About/>
             <Skills/>

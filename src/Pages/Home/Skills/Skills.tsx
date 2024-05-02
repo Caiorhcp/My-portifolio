@@ -35,12 +35,13 @@ const Skills = () => {
         width:"100%",
         boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
         animation: `${techBackgroundAnimation} 20s linear infinite alternate`,
-
-
-
-
-
         
+    }));
+
+
+    const StyledSkills2 = styled("div")(()=> ({
+        backgroundColor: "#191924",
+        minHeight: "60px",
     }));
 
     const TextContainer = styled("div")(({ theme })=> ({
@@ -62,10 +63,13 @@ const Skills = () => {
         flexDirection: "column",
         alignItems: "center",
         gap:"1.5px",
+        
     });
 
     return (
-        <StyledSkills>
+        <>
+        <StyledSkills2 id="skills"></StyledSkills2>
+        <StyledSkills >
             <Container maxWidth="md">
                 <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12} sm={6}>
@@ -174,6 +178,7 @@ const Skills = () => {
                 </Grid>
             </Container>
         </StyledSkills>
+        </>
     );
 }
 
