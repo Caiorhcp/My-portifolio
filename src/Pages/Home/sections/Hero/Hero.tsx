@@ -45,21 +45,20 @@ const Hero = () => {
         animation: `${moveAnimation} 10s ease-in-out infinite`,
     }));
 
-    const handleDownloadClick = () => {
+    const handleDownloadClick = async () => {
+        try {
+            const pdfUrl = "/src/assets/Images/CaioGoncalves.pdf"; 
+            const response = await fetch(pdfUrl);
+            const blob = await response.blob();
 
-        const pdfPath = '/src/assets/Images/CaioGoncalves.pdf'; 
-
-        const publicUrl = `${window.location.origin}${pdfPath}`;
-    
-        const link = document.createElement('a');
-        link.href = publicUrl;
-        link.download = 'Curriculo.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'Curriculum_Vitae.pdf';
+            link.click();
+        } catch (error) {
+            console.error('Erro ao fazer download do currículo:', error);
+        }
     };
-    
-    
 
     const handleContactMeClick = () => {
         setShowContactBox(true);
