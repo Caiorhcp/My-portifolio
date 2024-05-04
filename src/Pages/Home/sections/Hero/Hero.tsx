@@ -46,13 +46,19 @@ const Hero = () => {
     }));
 
     const handleDownloadClick = () => {
+
+        const pdfPath = '/CV/CaioGoncalves.pdf'; 
+
+        const publicUrl = `${window.location.origin}${pdfPath}`;
+    
         const link = document.createElement('a');
-        link.href = '/src/CV/CaioGoncalves.pdf';
+        link.href = publicUrl;
         link.download = 'Curriculo.pdf';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
+    
     
 
     const handleContactMeClick = () => {
