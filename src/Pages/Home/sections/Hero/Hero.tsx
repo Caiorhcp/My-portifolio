@@ -47,7 +47,7 @@ const Hero = () => {
 
     const handleDownloadClick = async () => {
         try {
-            const pdfUrl = "/src/assets/Images/CaioGoncalves.pdf"; 
+            const pdfUrl = "/src/assets/Images/curriculum.pdf"; 
             const response = await fetch(pdfUrl);
             const blob = await response.blob();
 
