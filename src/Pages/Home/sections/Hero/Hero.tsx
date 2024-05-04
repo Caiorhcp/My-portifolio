@@ -47,7 +47,7 @@ const Hero = () => {
 
     const handleDownloadClick = async () => {
         try {
-            const response = await fetch('/src/assets/CV/Curriculo.pdf'); 
+            const response = await fetch('/src/assets/CV/Caio Gonçalves.pdf'); 
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
