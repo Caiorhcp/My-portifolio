@@ -45,13 +45,20 @@ const Hero = () => {
         animation: `${moveAnimation} 10s ease-in-out infinite`,
     }));
 
-    const handleDownloadClick = () => {
-        const link = document.createElement('a');
-        link.href = '/src/assets/CV/Caio Gonçalves.pdf';
-        link.download = 'Curriculo.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleDownloadClick = async () => {
+        try {
+            const response = await fetch('/src/assets/CV/Caio Gonçalves.pdf'); 
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'Curriculo.pdf';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error('Erro ao baixar o currículo:', error);
+        }
     };
 
     const handleContactMeClick = () => {
