@@ -71,7 +71,7 @@ const Hero = () => {
     };
 
     const handleDownloadPortfolio = () => {
-        const url = "CV/Curriculo.pdf"; 
+        const url = "CV/Curriculo2.pdf"; 
         fetch(url)
             .then(response => response.blob())
             .then(blob => {
