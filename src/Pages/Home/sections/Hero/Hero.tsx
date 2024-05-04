@@ -47,7 +47,7 @@ const Hero = () => {
 
     const handleDownloadClick = () => {
         const link = document.createElement('a');
-        link.href = '/src/assets/CV/Curriculo.pdf';
+        link.href = '/src/assets/CV/CaioGoncalves.pdf';
         link.download = 'Curriculo.pdf';
         document.body.appendChild(link);
         link.click();
