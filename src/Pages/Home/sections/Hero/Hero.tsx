@@ -47,7 +47,7 @@ const Hero = () => {
 
     const handleDownloadClick = () => {
 
-        const pdfPath = '/src/CV/CaioGoncalves.pdf'; 
+        const pdfPath = '/src/assets/Images/CaioGoncalves.pdf'; 
 
         const publicUrl = `${window.location.origin}${pdfPath}`;
     
