@@ -47,7 +47,7 @@ const Hero = () => {
 
     const handleDownloadClick = async () => {
         try {
-            const response = await fetch('/src/assets/CV/Caio Gonçalves.pdf'); 
+            const response = await fetch('/src/assets/CV/Caio%20Gon%C3%A7alves.pdf'); 
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -60,6 +60,7 @@ const Hero = () => {
             console.error('Erro ao baixar o currículo:', error);
         }
     };
+    
 
     const handleContactMeClick = () => {
         setShowContactBox(true);
