@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Container, Grid, Typography, keyframes, styled } from "@mui/material";
+import { Box, Container, Grid, Typography, keyframes, styled, Dialog, DialogContent } from "@mui/material";
 import AvatarImg from "../../../../assets/Images/AvatarImg.jpg";
 import DownloadIcon from '@mui/icons-material/Download';
 import EmailIcon from '@mui/icons-material/Email';
@@ -60,6 +60,7 @@ const StyledContactBox = styled(Box)(() => ({
 
 const Hero = () => {
     const [showContactBox, setShowContactBox] = useState(false);
+    const [showPdfModal, setShowPdfModal] = useState(false);
 
     const handleContactMeClick = () => {
         setShowContactBox(true);
@@ -74,19 +75,14 @@ const Hero = () => {
     };
 
     const handleDownloadPortfolio = () => {
-        const url = "CV/Curriculo2.pdf"; 
-        fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-                const blobUrl = window.URL.createObjectURL(new Blob([blob]));
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = "portfolio.pdf"; 
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            })
-            .catch(error => console.error('Erro ao baixar o portfólio:', error));
+
+        const pdfUrl = "CV/Curriculo2.pdf"; 
+
+        window.open(pdfUrl, "_blank");
+    };
+
+    const handlePdfModalClose = () => {
+        setShowPdfModal(false);
     };
 
     return (
@@ -110,7 +106,7 @@ const Hero = () => {
                             <Grid item xs={12} md={4} display="flex" justifyContent="center">
                                 <StyledButton onClick={handleDownloadPortfolio}>
                                     <DownloadIcon />
-                                    <Typography>Download Portfolio</Typography>
+                                    <Typography>View Portfolio</Typography>
                                 </StyledButton>
                             </Grid>
                             <Grid item xs={12} md={4} display="flex" justifyContent="center">
@@ -136,6 +132,17 @@ const Hero = () => {
                     </Box>
                 </StyledContactBox>
             )}
+            <Dialog open={showPdfModal} onClose={handlePdfModalClose}>
+                <DialogContent>
+                    <iframe src="CV/Curriculo2.pdf" width="100%" height="500px"></iframe>
+                    <Box mt={2} textAlign="center">
+                        <StyledButton onClick={handlePdfModalClose}>
+                            <DownloadIcon />
+                            <Typography>Download Portfolio</Typography>
+                        </StyledButton>
+                    </Box>
+                </DialogContent>
+            </Dialog>
         </StyledHero>
     );
 };
