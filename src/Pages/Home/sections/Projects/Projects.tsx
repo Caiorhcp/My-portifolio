@@ -1,4 +1,3 @@
-import React from "react";
 import { Box, Button, Container, Grid, Typography, styled } from "@mui/material";
 import SASSImg from "../../../../assets/Images/SASSImg.png";
 import CalculatorImg from "../../../../assets/Images/CalculatorImg.png";
