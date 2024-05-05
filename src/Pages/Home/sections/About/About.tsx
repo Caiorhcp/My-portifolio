@@ -22,11 +22,14 @@ const StyledAbout = styled("div")(({ theme }) => ({
   alignItems: "center",
 
   [theme.breakpoints.up("xs")]: {
-    magin:"0px"
+    magin:"0px",
+    height: "70vh",
+  
   },
   [theme.breakpoints.up("md")]: {
     paddingTop: "0px",
-    marginTop:"-150px"
+    marginTop:"-150px",
+    height: "100vh",
 
   },
 }));

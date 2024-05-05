@@ -27,11 +27,14 @@ const StyledHero = styled("div")(({ theme }) => ({
     alignItems: "center",
 
     [theme.breakpoints.up('xs')]: {
-        paddingTop: "100px"
+        paddingTop: "100px",
+        height: "80vh",
+
     },
 
     [theme.breakpoints.up('md')]: {
-        paddingTop: "0px"
+        paddingTop: "0px",
+        height: "100vh",
     }
 }));
 

@@ -2,6 +2,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
+import TecImg from "../../../assets/Images/TecImg.png"
+import IntPImg from "../../../assets/Images/IntPImg.png"
 import { CardActionArea, Container, Grid, styled } from "@mui/material";
 import { FaHtml5, FaCss3Alt, FaSass, FaJs, FaReact } from 'react-icons/fa';
 import { SiTypescript, SiMysql, SiTailwindcss, SiGithub } from 'react-icons/si';
@@ -10,7 +12,7 @@ const StyledSkills = styled("div")(()=> ({
     position: "relative",
     overflow: "hidden",
     backgroundColor: "#191924",
-    height: "70vh",
+    height: "75vh",
     width:"100%",
 }));
 
@@ -21,7 +23,7 @@ const TextContainer = styled("div")(()=> ({
     borderRadius: "50px",
     transition: "transform 0.9s",
     "&:hover": {
-        transform: "translateY(-15px)",
+        transform: "translateY(-4px)",
     },
 }));
 
@@ -44,7 +46,7 @@ export default function Skills() {
                                     <CardMedia
                                         component="img"
                                         height="140"
-                                        image="/src/assets/Images/TecImg.png"
+                                        image= {TecImg}
                                         alt="TecImgSkills"
                                     />
                                     <CardContent sx={{ backgroundColor: 'rgba(26,26,40,0.7)', color:'white' }}>
@@ -77,7 +79,7 @@ export default function Skills() {
                                     <CardMedia
                                         component="img"
                                         height="140"
-                                        image="/src/assets/Images/IntPImg.png"
+                                        image={IntPImg}
                                         alt="PersonalImg"
                                     />
                                     <CardContent sx={{ backgroundColor: 'rgba(26,26,40,0.7)', color:'white' }} >
