@@ -1,178 +1,96 @@
-import { Container, Grid, Typography, styled } from "@mui/material";
-import { keyframes } from "@emotion/react";
+import * as React from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { CardActionArea, Container, Grid, styled } from "@mui/material";
+import { FaHtml5, FaCss3Alt, FaSass, FaJs, FaReact } from 'react-icons/fa';
+import { SiTypescript, SiMysql, SiTailwindcss, SiGithub } from 'react-icons/si';
 
-const pulseAnimation = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
+const StyledSkills = styled("div")(()=> ({
+    position: "relative",
+    overflow: "hidden",
+    backgroundColor: "#191924",
+    height: "70vh",
+    width:"100%",
+}));
 
-const techBackgroundAnimation = keyframes`
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-`;
+const TextContainer = styled("div")(()=> ({
+    textAlign: "center",
+    padding: "20px",
+    margin:"10px",
+    borderRadius: "50px",
+    transition: "transform 0.9s",
+    "&:hover": {
+        transform: "translateY(-15px)",
+    },
+}));
 
-const Skills = () => {
+const StyledSkills2 = styled("div")(()=> ({
+    backgroundColor: "#191924",
+    minHeight: "60px",
+}));
 
-    const StyledSkills = styled("div")(()=> ({
-        position: "relative",
-        overflow: "hidden",
-        backgroundColor: "#191924",
-        height: "120vh",
-        width:"100%",
-        boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
-        animation: `${techBackgroundAnimation} 20s linear infinite alternate`,
-        
-    }));
-
-
-    const StyledSkills2 = styled("div")(()=> ({
-        backgroundColor: "#191924",
-        minHeight: "60px",
-    }));
-
-    const TextContainer = styled("div")(({ theme })=> ({
-        textAlign: "center",
-        padding: "20px",
-        margin:"10px",
-        borderRadius: "50px",
-        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-        transition: "background-color 0.3s, transform 0.3s",
-        "&:hover": {
-        backgroundColor: theme.palette.secondary.main,
-        transform: "scale(1.05)",
-        },
-        animation: `${pulseAnimation} 2s infinite`,
-    }));
-
-    const InnerGrid = styled(Grid)({
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap:"1.5px",
-        
-    });
-
+export default function Skills() {
     return (
         <>
-        <StyledSkills2 id="skills"></StyledSkills2>
-        <StyledSkills >
+        <StyledSkills2 id='skills'></StyledSkills2>
+        <StyledSkills>
             <Container maxWidth="md">
                 <Grid container justifyContent="center" spacing={2}>
                     <Grid item xs={12} sm={6}>
                         <TextContainer>
-                            <Typography color="primary.contrastText" variant="h3" gutterBottom>
-                                Skills
-                            </Typography>
-                            <InnerGrid container direction="column" spacing={1}>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        HTML
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        CSS
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        SASS
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        JAVASCRIPT
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        TYPESCRIPT
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        REACT
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        MYSQL
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        TAILWIND
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        GIT AND GITHUB
-                                    </Typography>
-                                </Grid>
-                            </InnerGrid>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image="/src/assets/Images/TecImg.png"
+                                        alt="TecImgSkills"
+                                    />
+                                    <CardContent sx={{ backgroundColor: 'rgba(26,26,40,0.7)', color:'white' }}>
+                                        <Typography gutterBottom variant="h5" component="div">
+                                            Skills
+                                        </Typography>
+                                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                            <FaHtml5 style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <FaCss3Alt style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <FaSass style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <FaJs style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <SiTypescript style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <FaReact style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <SiMysql style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <SiTailwindcss style={{ fontSize: '48px', margin: '0 5px' }} />
+                                            <SiGithub style={{ fontSize: '48px', margin: '0 5px' }} />
+                                        </div>
+                                        <Typography variant="body2">
+                                        Middle experience in web Design and Front-End.
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
                         </TextContainer>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextContainer>
-                            <Typography color="primary.contrastText" variant="h3" gutterBottom>
-                                Interpersonal
-                            </Typography>
-                            <InnerGrid container direction="column" spacing={1}>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Agile Methodology
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Leadership
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Flexibility
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Active listening.
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Empathy
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Motivation
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Communication
-                                    </Typography>
-                                </Grid>
-                                <Grid item>
-                                    <Typography color="primary.contrastText" variant="body1">
-                                        Teamwork
-                                    </Typography>
-                                </Grid>
-                            </InnerGrid>
+                            <Card sx={{ maxWidth: 345 }}>
+                                <CardActionArea>
+                                    <CardMedia
+                                        component="img"
+                                        height="140"
+                                        image="/src/assets/Images/IntPImg.png"
+                                        alt="PersonalImg"
+                                    />
+                                    <CardContent sx={{ backgroundColor: 'rgba(26,26,40,0.7)', color:'white' }} >
+                                        <Typography gutterBottom variant="h5" component="div" >
+                                            Personal Skills
+                                        </Typography>
+                                        <Typography variant="body2" >
+                                            Agile Methodology, Leadership, Flexibility, Active listening, Empathy, Motivation, Communication, Teamwork
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                            </Card>
                         </TextContainer>
                     </Grid>
                 </Grid>
@@ -181,5 +99,3 @@ const Skills = () => {
         </>
     );
 }
-
-export default Skills;

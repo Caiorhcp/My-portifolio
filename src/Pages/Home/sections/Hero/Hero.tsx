@@ -51,7 +51,7 @@ const StyledContactBox = styled(Box)(() => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(25,25,25,0.5)",
     zIndex: 999,
 }));
 
