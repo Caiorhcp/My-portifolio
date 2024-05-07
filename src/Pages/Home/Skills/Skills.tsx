@@ -8,16 +8,27 @@ import { CardActionArea, Container, Grid, styled } from "@mui/material";
 import { FaHtml5, FaCss3Alt, FaSass, FaJs, FaReact } from 'react-icons/fa';
 import { SiTypescript, SiMysql, SiTailwindcss, SiGithub } from 'react-icons/si';
 
-const StyledSkills = styled("div")(()=> ({
+const StyledSkills = styled("div")(({theme})=> ({
     position: "relative",
     overflow: "hidden",
     backgroundColor: "#191924",
     height: "75vh",
     width:"100%",
+
+    [theme.breakpoints.up('xs')]: {
+        paddingTop: "0px",
+        height: "83vh",
+
+    },
+
+    [theme.breakpoints.up('md')]: {
+        marginTop: "0px",
+        height: "58vh",
+    }
 }));
 
 const TextContainer = styled("div")(()=> ({
-    textAlign: "center",
+    textAlign: "center", 
     padding: "20px",
     margin:"10px",
     borderRadius: "50px",

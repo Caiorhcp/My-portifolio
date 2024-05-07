@@ -58,7 +58,7 @@ function ResponsiveAppBar() {
             Welcome
           </Typography>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none', } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -69,7 +69,7 @@ function ResponsiveAppBar() {
             >
               <MenuIcon />
             </IconButton>
-            <Menu
+            <Menu 
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{
@@ -84,7 +84,7 @@ function ResponsiveAppBar() {
               open={Boolean(anchorElNav)}
               onClose={handleCloseNavMenu}
               sx={{
-                display: { xs: 'block', md: 'none' },
+                display: { xs: 'block', md: 'none' }, backgroundColor: 'rgba(25, 25, 36, 0.8)', backdropFilter: 'blur(10px)'
               }}
             >
               {pages.map((page) => (
@@ -102,7 +102,7 @@ function ResponsiveAppBar() {
             href="#home"
             sx={{
               mr: 2,
-              display: { xs: 'flex', md: 'none' },
+              display: { xs: 'flex', md: 'none' } ,
               flexGrow: 1,
               fontFamily: 'monospace',
               fontWeight: 700,
@@ -113,12 +113,12 @@ function ResponsiveAppBar() {
           >
             WELCOME
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex', } }}>
             {pages.map((page) => (
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{ my: 2, color: 'white', display: 'block',  }}
                 component="a"
                 href={`#${page.toLowerCase()}`}
               >
@@ -127,10 +127,10 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{ flexGrow: 0,}}>
             <Tooltip title="Open settings" >
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }} >
-              <SettingsIcon fontSize='large' sx={{ color: 'white' }}/>
+              <SettingsIcon fontSize='large' sx={{ color: 'white',}}/>
               </IconButton>
             </Tooltip>
             <Menu
@@ -150,7 +150,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem   key={setting} onClick={handleCloseUserMenu}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

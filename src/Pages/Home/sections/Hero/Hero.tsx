@@ -134,7 +134,7 @@ const Hero = () => {
             )}
             <Dialog open={showPdfModal} onClose={handlePdfModalClose}>
                 <DialogContent>
-                    <iframe src="CV/Curriculo2.pdf" width="100%" height="500px"></iframe>
+                    <iframe src="CV/Curriculo2.pdf" width="100%" height="500px" title='cv'></iframe>
                     <Box mt={2} textAlign="center">
                         <StyledButton onClick={handlePdfModalClose}>
                             <DownloadIcon />
