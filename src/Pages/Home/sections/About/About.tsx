@@ -9,6 +9,7 @@ import TecImg from "../../../../assets/Images/TecImg.png";
 import IntPImg from "../../../../assets/Images/IntPImg.png";
 
 const StyledAbout = styled("div")(({ theme }) => ({
+  minHeight:"100vh",
   backgroundColor: "#191924",
   padding: "50px 0", 
   textAlign: "center",
@@ -16,6 +17,9 @@ const StyledAbout = styled("div")(({ theme }) => ({
   marginBottom: "-130px",
 
   [theme.breakpoints.up("xs")]: {
+    padding: "250px 0", 
+  },
+  [theme.breakpoints.up("md")]: {
     padding: "100px 0", 
   },
 }));
@@ -55,7 +59,7 @@ const About = () => {
                 During the pandemic, I was able to reignite this passion by diving back into GameMaker, which led me to change my area of study. In 2023, I enrolled in a higher education course in the technology field.
               </Typography>
               <Typography color="primary.contrastText" variant="body1">
-                At the moment, I'm passionate about front-end development and starting my studies in Artificial Intelligence, something I'm already loving.
+                At the moment, I'm passionate about front-end and back-end development and starting my studies in Artificial Intelligence, something I'm already loving.
               </Typography>
             </TextContainer>
           </Grid>
@@ -81,7 +85,6 @@ const About = () => {
                       <SiTypescript style={{ fontSize: '48px', margin: '0 5px' }} />
                       <FaReact style={{ fontSize: '48px', margin: '0 5px' }} />
                       <FaNodeJs style={{ fontSize: '48px', margin: '0 5px' }} />
-                      <FaReact style={{ fontSize: '48px', margin: '0 5px' }} />
                       <SiMysql style={{ fontSize: '48px', margin: '0 5px' }} />
                       <SiTailwindcss style={{ fontSize: '48px', margin: '0 5px' }} />
                       <SiGithub style={{ fontSize: '48px', margin: '0 5px' }} />

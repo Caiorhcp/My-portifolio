@@ -101,7 +101,7 @@ const Hero = () => {
                     </Grid>
                     <Grid item xs={12} md={7}>
                         <Typography color="primary.contrastText" variant="h1" textAlign="center" pb={2}>Caio Vinicius</Typography>
-                        <Typography color="primary.contrastText" variant="h2" textAlign="center">I'm a Front-End Jr Developer</Typography>
+                        <Typography color="primary.contrastText" variant="h2" textAlign="center">I'm a FullStack Jr Developer</Typography>
                         <Grid container justifyContent="center" spacing={3} pt={3}>
                             <Grid item xs={12} md={4} display="flex" justifyContent="center">
                                 <StyledButton onClick={handleDownloadPortfolio}>
