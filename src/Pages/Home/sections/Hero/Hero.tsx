@@ -76,7 +76,7 @@ const Hero = () => {
 
     const handleDownloadPortfolio = () => {
 
-        const pdfUrl = "CV/Curriculo2.pdf"; 
+        const pdfUrl = "CV/CurriculoDef.pdf"; 
 
         window.open(pdfUrl, "_blank");
     };
@@ -134,7 +134,7 @@ const Hero = () => {
             )}
             <Dialog open={showPdfModal} onClose={handlePdfModalClose}>
                 <DialogContent>
-                    <iframe src="CV/Curriculo2.pdf" width="100%" height="500px" title='cv'></iframe>
+                    <iframe src="CV/CurriculoDef.pdf" width="100%" height="500px" title='cv'></iframe>
                     <Box mt={2} textAlign="center">
                         <StyledButton onClick={handlePdfModalClose}>
                             <DownloadIcon />
