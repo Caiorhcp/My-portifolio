@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/pt";
 import { whatsapp } from "@/lib/site";
-import { LanguageSwitcher } from "./LanguageSwitcher";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
@@ -27,7 +26,6 @@ export function Header({ lang, dict }: { lang: Locale; dict: Dictionary }) {
               </li>
             ))}
           </ul>
-          <LanguageSwitcher lang={lang} label={dict.nav.language} />
           <ThemeToggle toLight={dict.theme.toLight} toDark={dict.theme.toDark} />
           <a
             href={whatsapp(dict.whatsapp.default)}

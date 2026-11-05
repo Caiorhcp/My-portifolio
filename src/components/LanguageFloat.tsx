@@ -7,11 +7,24 @@ import { useEffect, useRef, useState } from "react";
 import { HTML_LANG, type Locale, LOCALE_COOKIE, LOCALE_NAME, LOCALES } from "@/i18n/config";
 import { Flag } from "./Flag";
 
+const TOP_FLAG = "idioma-topo";
+
 /** Botão flutuante acima do WhatsApp: abre um menu com as línguas e suas bandeiras. */
 export function LanguageFloat({ lang, label }: { lang: Locale; label: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const rest = usePathname().replace(/^\/(pt|en|es)(?=\/|$)/, "");
+
+  // Depois de trocar o idioma, a página nova abre do topo (sem pular para outra seção)
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(TOP_FLAG) !== lang) return;
+      sessionStorage.removeItem(TOP_FLAG);
+    } catch {
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [lang]);
 
   useEffect(() => {
     if (!open) return;
@@ -46,8 +59,14 @@ export function LanguageFloat({ lang, label }: { lang: Locale; label: string }) 
                   hrefLang={HTML_LANG[l]}
                   lang={HTML_LANG[l]}
                   aria-current={l === lang ? "true" : undefined}
+                  scroll={false}
                   onClick={() => {
                     document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+                    try {
+                      sessionStorage.setItem(TOP_FLAG, l);
+                    } catch {
+                      // sem sessionStorage: o Next mantém a rolagem padrão
+                    }
                     setOpen(false);
                   }}
                   className={`flex items-center gap-3 rounded-[6px] px-3 py-2.5 transition-colors ${
