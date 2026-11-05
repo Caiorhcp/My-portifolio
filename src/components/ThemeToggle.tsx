@@ -3,7 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function ThemeToggle() {
+export function ThemeToggle({ toLight, toDark }: { toLight: string; toDark: string }) {
   const [dark, setDark] = useState(false);
   useEffect(() => setDark(document.documentElement.dataset.theme === "dark"), []);
 
@@ -22,7 +22,7 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={dark ? "Usar tema claro" : "Usar tema escuro"}
+      aria-label={dark ? toLight : toDark}
       className="grid size-10 place-items-center rounded-page transition-colors hover:bg-sunken active:scale-95"
     >
       {dark ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}

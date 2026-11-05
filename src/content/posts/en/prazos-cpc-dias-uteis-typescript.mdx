@@ -1,0 +1,89 @@
+"Within 15 (fifteen) days." Every Brazilian court filing has a sentence like that, and anyone who works with cases knows that counting those days on a calendar is tedious. In [S.A.P.O.](/en/projetos/sapo), the system finds the deadline in the text and computes the due date on its own. This post shows the rules and how they became code.
+
+## The three rules of the CPC
+
+Brazil's Code of Civil Procedure (CPC) sets the game in three articles:
+
+- **Art. 219:** deadlines in days count only **business days**.
+- **Art. 220:** deadlines are suspended from **December 20 to January 20**, the court recess.
+- **Art. 224:** the starting day is excluded and the due day is included. If the due date falls on a day without court business, it moves to the next business day.
+
+In practice: counting starts the day after the notice and only advances on business days.
+
+## Finding the deadline in the text
+
+Before computing, you need to find the deadline. A regular expression looks for patterns like "prazo de" (deadline of), "em até" (within) or "dentro de" (within), followed by a number and a unit. The number can be in digits or spelled out, and the spelled-out version in parentheses is ignored:
+
+- "no prazo de 15 (quinze) dias" → 15 business days;
+- "em até 48 horas" → hours (impossible to compute without the exact time of the notice);
+- "prazo de 30 dias corridos" → 30 calendar days.
+
+## Dates without time zones
+
+The first classic calendar bug in JavaScript is the time zone. `new Date(2026, 0, 1)` uses the browser's time zone, and depending on where the user is, the day "shifts". The solution was to always work in UTC:
+
+```ts
+const day = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d));
+const addDays = (date: Date, n: number) => new Date(date.getTime() + n * 86_400_000);
+```
+
+## Holidays that move every year
+
+Fixed national holidays are easy: January 1, April 21, May 1, September 7, October 12, November 2 and 15, December 25 and, since Law 14,759/2023, November 20.
+
+The movable ones depend on Easter. Carnival falls 47 days before it, Good Friday 2 days before and Corpus Christi 60 days after. For Easter there's an old and exact algorithm, Meeus/Jones/Butcher, which fits in a few lines of integer arithmetic:
+
+```ts
+export function easter(y: number): Date {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31), dayOfMonth = ((h + l - 7 * m + 114) % 31) + 1;
+  return day(y, month, dayOfMonth);
+}
+```
+
+## What counts as a business day
+
+Putting it all together, a day is a business day if it's not Saturday or Sunday, not a holiday and not within the recess:
+
+```ts
+const inRecess = (d: Date) => {
+  const m = d.getUTCMonth() + 1, dd = d.getUTCDate();
+  return (m === 12 && dd >= 20) || (m === 1 && dd <= 20);
+};
+
+export function isBusinessDay(d: Date): boolean {
+  const w = d.getUTCDay();
+  return w !== 0 && w !== 6 && !holidays(d.getUTCFullYear()).has(key(d)) && !inRecess(d);
+}
+```
+
+## The due date
+
+With that, the computation is a loop: move one day at a time from the notice and only count business days.
+
+```ts
+for (let left = deadline; left > 0; ) {
+  date = addDays(date, 1);
+  if (isBusinessDay(date)) left--;
+}
+```
+
+For deadlines in calendar days, months or years, you add directly and, if the last day falls without court business, push it to the next business day, as Art. 224 requires.
+
+## The limits, said out loud
+
+A deadline tool that fails silently is dangerous. That's why S.A.P.O. states what it does **not** take into account:
+
+- state and municipal holidays and each court's days without business;
+- the special rules for when deadlines start under Art. 231 of the CPC (electronic notice or notice by publication, for example);
+- doubled deadlines, such as those for the Government and the Public Defender's Office.
+
+The computation helps with triage, but it doesn't replace the review of whoever signs the filing. That warning is on the screen itself, right next to the result.
+
+## Tests, always
+
+Calendar code looks right until the day it isn't. The tests cover the date of Easter, days without court business, a 15-business-day deadline that crosses a weekend and a holiday, a deadline suspended by the recess, calendar days with an extended due date and deadlines in hours, which get no computed date.
+
+The full code is on [GitHub](https://github.com/Caiorhcp/sapo-juridico). If your firm needs a tool like this, built to measure, [let's talk](/en/sobre).

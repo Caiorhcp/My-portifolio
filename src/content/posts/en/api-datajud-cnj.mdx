@@ -1,0 +1,63 @@
+**Datajud** is the national database of Brazil's judiciary, maintained by the National Council of Justice (CNJ). It has a public API that returns a case's metadata: class, subjects, court division and the list of procedural events. I integrated this API into [S.A.P.O.](/en/projetos/sapo) and wrote down here what I wish I had known before.
+
+## The access key
+
+The API requires a key in the `Authorization` header, in the format `APIKey <key>`. The key is public and published on the [Datajud wiki](https://datajud-wiki.cnj.jus.br/api-publica/acesso), but it can change at any time. That's why it lives in an environment variable, never in the code.
+
+The API also doesn't accept calls straight from the browser. The request has to go through a server, and in S.A.P.O. that became a Next.js route (`/api/processo`). It's the only part of the system that uses a server, and only the case number is sent.
+
+## Each court is an index
+
+There's no single endpoint to "search for a case". Each court has its own index: `api_publica_tjce`, `api_publica_trf5`, `api_publica_trt7` and so on. So before querying, you need to figure out the court.
+
+The good news is that the case number itself tells you. The unified number defined by CNJ Resolution 65/2008 has the format `NNNNNNN-DD.AAAA.J.TR.OOOO`:
+
+- `J` is the branch of the judiciary: 4 is Federal, 5 is Labor, 8 is State, and so on;
+- `TR` is the court within that branch. In State courts, the codes follow the alphabetical order of Brazilian states: 01 is Acre, 06 is Ceará, 26 is São Paulo.
+
+With these two fields you can build the index name. A case with `.8.06.` goes to the Ceará State Court (TJCE); one with `.4.05.` goes to the 5th Federal Regional Court (TRF5). Also worth knowing: the Supreme Court (STF) is not in the public API.
+
+## Validate before querying
+
+The `DD` in the number is a check digit computed with ISO 7064 (mod 97). Checking it before calling the API avoids wasting a slow query on a mistyped number:
+
+```ts
+// DD = 98 - (N AAAA J TR OOOO 00 mod 97)
+const expected = 98 - Number(BigInt(n + year + j + tr + origin + "00") % 97n);
+if (expected !== Number(dv)) return null;
+```
+
+The number has 20 digits, too large for a regular JavaScript `number` without losing precision. Hence the `BigInt`.
+
+## It's slow, and that's fine
+
+In my tests, each query took **30 to 50 seconds**. It's not a bug in your code. In practice, that called for three things:
+
+- **A generous timeout.** The route waits up to 55 seconds before giving up, and the Vercel function was configured to run for up to 60.
+- **An honest interface.** While waiting, the screen tells the user the lookup may take a while.
+- **Named errors.** When Datajud doesn't respond in time, the message says so, instead of an "unexpected error".
+
+## Rate limits
+
+The API returns `429` when you go over the limit. Instead of retrying in a loop, S.A.P.O. explains that Datajud limited the queries and offers the alternative path: open the case on the court's website, download the PDF and upload it for analysis.
+
+## Events have codes
+
+Each procedural event comes with a name and a code from the CNJ's **Unified Procedural Table (TPU)**. Use the code, not the text. The name sometimes comes with only its last part: final archiving, for example, may show up simply as "Definitivo". By the code (246), identification never fails. Some I used:
+
+| Code | Event |
+| --- | --- |
+| 26 | Case assignment (distribuição) |
+| 970 | Hearing (audiência) |
+| 246 | Final archiving (arquivamento definitivo) |
+
+With the milestones identified, you can compute how long the case has been running and warn when it has been idle for more than 90 days.
+
+## Summary
+
+- Keep the key in an environment variable and call the API from the server.
+- Find the court from the case number and validate the check digit first.
+- Expect slow responses and handle `429` and timeouts with clear messages.
+- Classify events by their TPU code.
+
+The integration code is in the [S.A.P.O. repository](https://github.com/Caiorhcp/sapo-juridico). If you're building something for law firms or legal departments and want to talk, [get in touch](/en/sobre).

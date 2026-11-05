@@ -1,0 +1,76 @@
+When I started [S.A.P.O.](/en/projetos/sapo), there was a single rule: the PDF of a court case could not leave the user's computer. Legal documents carry names, tax IDs, addresses and sometimes health information. Sending all that to a server just to find out whether a page is an order or a judgment made no sense.
+
+So the model had to run in the browser. This post explains how I did it without TensorFlow.js, without ONNX and without any machine learning library on the front end.
+
+## The problem
+
+Classify each page of a Brazilian court case into six types: appellate decision, interlocutory appeal, order, extraordinary appeal petition, judgment or "other" (certificates, powers of attorney and everything else).
+
+For training I used **VICTOR**, a public dataset with real pages from extraordinary appeals at Brazil's Supreme Court, labeled by the court's own experts ([Luz de Araujo et al., LREC 2020](https://aclanthology.org/2020.lrec-1.181/)). The small version has about 149,000 pages, already split into training, validation and test sets. Using the same split as the paper gave me something valuable: a published number to compare against.
+
+## Why not a neural network
+
+The temptation was to use a big model. But three things weighed in:
+
+- **Size.** Everything the browser downloads counts. A model of hundreds of megabytes would ruin the experience on a phone.
+- **Reliable probabilities.** For the interface to show "Extraordinary appeal petition, 81%", that probability has to mean something.
+- **The baseline.** In the paper, the best result came from a linear SVM, not from a neural network.
+
+I went with the classic: **TF-IDF** with unigrams and bigrams (30,000 terms) and **logistic regression**. In Python, with scikit-learn, it takes a few lines.
+
+## The result
+
+On the test set, with the same split as the original paper:
+
+| Model | Macro F1 | Weighted F1 |
+| --- | --- | --- |
+| TF-IDF + logistic regression (S.A.P.O.) | **78.2** | **94.7** |
+| Linear SVM (original paper) | 76.3 | 94.3 |
+| CNN (original paper) | 75.8 | 94.7 |
+
+A simple, well-tuned model beat the published baseline. And the exported file came out at 1.4 MB compressed.
+
+## Taking the model to the browser
+
+The trick is realizing that, once trained, a logistic regression over TF-IDF is just arithmetic. I exported to JSON everything scikit-learn keeps: the vocabulary, the IDF of each term, the weight matrix and the intercept of each class.
+
+In TypeScript, inference repeats the same steps:
+
+1. Normalize the text exactly as Python did (lowercase, replace emails and links with markers, remove stopwords).
+2. Count the unigrams and bigrams that exist in the vocabulary.
+3. Apply sublinear TF (`1 + log(count)`) times IDF and normalize the vector by its L2 norm.
+4. Multiply by the weights, add the intercept and pass the result through softmax.
+
+```ts
+const logits = [...this.model.intercept];
+for (const [i, v] of x) {
+  const w = this.model.coef[i];
+  for (let c = 0; c < logits.length; c++) logits[c] += w[c] * (v / norm);
+}
+const max = Math.max(...logits);
+const exp = logits.map((l) => Math.exp(l - max));
+const sum = exp.reduce((a, b) => a + b, 0);
+return exp.map((e) => e / sum);
+```
+
+Subtracting the largest logit before the exponential avoids numeric overflow. It's the same care libraries take under the hood.
+
+## The test that builds confidence
+
+Rewriting a model in another language is asking to fail silently. A comma out of place in the normalization and the probabilities change without any error showing up.
+
+That's why the check happens on both sides. In Python, training compares inference done from the JSON against scikit-learn on 500 test pages. In TypeScript, a test reads texts with the probabilities computed by Python, runs inference and compares number by number, down to the fourth decimal place. If someone changes the normalization on one side and forgets the other, CI breaks.
+
+## The detail that almost slipped by
+
+In VICTOR, 89% of the pages are "other", because each case comes complete, with certificates and powers of attorney. The model learns that proportion and, when in doubt, guesses "other".
+
+But on the website, people send **one filing at a time**. The distribution is different. The fix was to divide each probability by the class frequency in training and renormalize, which is the same as assuming every class is equally likely. Average per-class recall went from 74.2 to 86.8. The benchmark macro F1 drops, and I document that in the README: it's a choice made for real use, not for the table.
+
+## Takeaways
+
+- Not every AI problem needs a GPU or a server. A well-trained linear model solves a lot and runs on any phone.
+- When you port a model, the parity test is not optional.
+- Look at the distribution of your users' data, not only at the dataset's.
+
+The code is on [GitHub](https://github.com/Caiorhcp/sapo-juridico) and the system is live at [sapo-juridico.vercel.app](https://sapo-juridico.vercel.app). You can try it with the sample document, without sending anything to anyone.

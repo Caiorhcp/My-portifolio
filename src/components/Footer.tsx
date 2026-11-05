@@ -1,28 +1,30 @@
 import Link from "next/link";
+import type { Locale } from "@/i18n/config";
+import type { Dictionary } from "@/i18n/pt";
 import { LINKS, whatsapp } from "@/lib/site";
 
-export function Footer() {
+export function Footer({ lang, dict }: { lang: Locale; dict: Dictionary }) {
   return (
     <footer className="mt-32 bg-sunken">
       <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <p className="font-serif text-h3">Caio Gonçalves</p>
-          <p className="mt-2 max-w-[36ch] text-soft">Desenvolvedor full stack. Sites, apps e sistemas, do Ceará para qualquer lugar.</p>
-          <a href={whatsapp()} target="_blank" rel="noreferrer" className="mt-5 inline-block font-medium text-brand underline underline-offset-4">
-            Fazer um orçamento pelo WhatsApp
+          <p className="mt-2 max-w-[36ch] text-soft">{dict.footer.tagline}</p>
+          <a href={whatsapp(dict.whatsapp.default)} target="_blank" rel="noreferrer" className="mt-5 inline-block font-medium text-brand underline underline-offset-4">
+            {dict.footer.quote}
           </a>
         </div>
-        <nav aria-label="Rodapé">
-          <p className="text-small text-soft">Site</p>
+        <nav aria-label={dict.footer.site}>
+          <p className="text-small text-soft">{dict.footer.site}</p>
           <ul className="mt-3 space-y-2">
-            <li><Link href="/projetos" className="hover:underline">Projetos</Link></li>
-            <li><Link href="/blog" className="hover:underline">Blog</Link></li>
-            <li><Link href="/sobre" className="hover:underline">Sobre</Link></li>
-            <li><a href="/blog/rss.xml" className="hover:underline">RSS do blog</a></li>
+            <li><Link href={`/${lang}/projetos`} className="hover:underline">{dict.nav.projects}</Link></li>
+            <li><Link href={`/${lang}/blog`} className="hover:underline">{dict.nav.blog}</Link></li>
+            <li><Link href={`/${lang}/sobre`} className="hover:underline">{dict.nav.about}</Link></li>
+            <li><a href={`/${lang}/blog/rss.xml`} className="hover:underline">{dict.footer.rss}</a></li>
           </ul>
         </nav>
         <div>
-          <p className="text-small text-soft">Contato</p>
+          <p className="text-small text-soft">{dict.footer.contact}</p>
           <ul className="mt-3 space-y-2">
             <li><a href={`mailto:${LINKS.email}`} className="hover:underline">{LINKS.email}</a></li>
             <li><a href={LINKS.github} target="_blank" rel="noreferrer" className="hover:underline">GitHub</a></li>

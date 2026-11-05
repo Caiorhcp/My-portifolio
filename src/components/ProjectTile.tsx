@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Locale } from "@/i18n/config";
 import type { Project } from "@/lib/projects";
 
 const TONE: Record<Project["tone"], string> = {
@@ -9,14 +10,15 @@ const TONE: Record<Project["tone"], string> = {
 };
 
 /** Card de case: a tela real do projeto num campo de cor, e o texto embaixo. */
-export function ProjectTile({ project }: { project: Project }) {
+export function ProjectTile({ project, lang }: { project: Project; lang: Locale }) {
   const image = project.images[0];
+  const text = project.text[lang];
   return (
-    <Link href={`/projetos/${project.slug}`} className="group block">
+    <Link href={`/${lang}/projetos/${project.slug}`} className="group block">
       <div className={`relative aspect-[16/10] overflow-hidden rounded-page ${TONE[project.tone]}`}>
         <Image
           src={image.src}
-          alt={image.alt}
+          alt={text.alts[0]}
           width={image.width}
           height={image.height}
           sizes="(min-width: 768px) 50vw, 100vw"
@@ -27,9 +29,9 @@ export function ProjectTile({ project }: { project: Project }) {
         <h3 className="font-serif text-h3 transition-colors group-hover:text-brand">{project.name}</h3>
         <span className="tabular text-small text-soft">{project.year}</span>
       </div>
-      <p className="mt-1 text-soft">{project.tagline}</p>
+      <p className="mt-1 text-soft">{text.tagline}</p>
       <ul className="mt-3 flex flex-wrap gap-2 text-small">
-        {project.stack.slice(0, 4).map((t) => (
+        {(text.stack ?? project.stack).slice(0, 4).map((t) => (
           <li key={t} className="rounded-page bg-sunken px-2.5 py-1">
             {t}
           </li>

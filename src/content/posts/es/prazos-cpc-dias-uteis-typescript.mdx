@@ -1,0 +1,89 @@
+"En el plazo de 15 (quince) días." Todo escrito procesal brasileño tiene una frase así, y quien trabaja con procesos sabe que contar esos días en el calendario da trabajo. En [S.A.P.O.](/es/projetos/sapo), el sistema encuentra el plazo en el texto y calcula el vencimiento solo. Este artículo muestra las reglas y cómo se convirtieron en código.
+
+## Las tres reglas del CPC
+
+El Código de Proceso Civil de Brasil (CPC) define el juego en tres artículos:
+
+- **Art. 219:** los plazos en días cuentan solo los **días hábiles**.
+- **Art. 220:** el curso de los plazos queda suspendido del **20 de diciembre al 20 de enero**, el receso judicial.
+- **Art. 224:** se excluye el día del comienzo y se incluye el del vencimiento. Si el vencimiento cae en un día sin actividad judicial, pasa al siguiente día hábil.
+
+En la práctica: el conteo empieza el día siguiente a la notificación y solo avanza en días hábiles.
+
+## Encontrar el plazo en el texto
+
+Antes de calcular, hay que encontrar el plazo. Una expresión regular busca patrones como "prazo de" (plazo de), "em até" (en hasta) o "dentro de", seguidos de un número y una unidad. El número puede venir en cifras o en letras, y la versión en letras entre paréntesis se ignora:
+
+- "no prazo de 15 (quinze) dias" → 15 días hábiles;
+- "em até 48 horas" → horas (no se puede calcular sin la hora exacta de la notificación);
+- "prazo de 30 dias corridos" → 30 días corridos.
+
+## Fechas sin zona horaria
+
+El primer error clásico de calendario en JavaScript es la zona horaria. `new Date(2026, 0, 1)` usa la zona del navegador y, según dónde esté la persona, el día "cambia". La solución fue trabajar siempre en UTC:
+
+```ts
+const day = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d));
+const addDays = (date: Date, n: number) => new Date(date.getTime() + n * 86_400_000);
+```
+
+## Feriados que cambian cada año
+
+Los feriados nacionales fijos son fáciles: 1 de enero, 21 de abril, 1 de mayo, 7 de septiembre, 12 de octubre, 2 y 15 de noviembre, 25 de diciembre y, desde la Ley 14.759/2023, el 20 de noviembre.
+
+Los móviles dependen de la Pascua. El Carnaval cae 47 días antes, el Viernes Santo 2 días antes y Corpus Christi 60 días después. Para la Pascua existe un algoritmo antiguo y exacto, el de Meeus/Jones/Butcher, que cabe en pocas líneas de aritmética entera:
+
+```ts
+export function easter(y: number): Date {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31), dayOfMonth = ((h + l - 7 * m + 114) % 31) + 1;
+  return day(y, month, dayOfMonth);
+}
+```
+
+## Qué es un día hábil
+
+Juntando todo, un día es hábil si no es sábado ni domingo, no es feriado y no está en el receso:
+
+```ts
+const inRecess = (d: Date) => {
+  const m = d.getUTCMonth() + 1, dd = d.getUTCDate();
+  return (m === 12 && dd >= 20) || (m === 1 && dd <= 20);
+};
+
+export function isBusinessDay(d: Date): boolean {
+  const w = d.getUTCDay();
+  return w !== 0 && w !== 6 && !holidays(d.getUTCFullYear()).has(key(d)) && !inRecess(d);
+}
+```
+
+## El vencimiento
+
+Con eso, el cálculo es un bucle: avanza un día a la vez desde la notificación y solo descuenta los días hábiles.
+
+```ts
+for (let left = plazo; left > 0; ) {
+  date = addDays(date, 1);
+  if (isBusinessDay(date)) left--;
+}
+```
+
+Para plazos en días corridos, meses o años, se suma directamente y, si el último día cae sin actividad judicial, se pasa al siguiente día hábil, como manda el art. 224.
+
+## Los límites, dichos en voz alta
+
+Una herramienta de plazos que se equivoca en silencio es peligrosa. Por eso S.A.P.O. avisa lo que **no** considera:
+
+- feriados estatales y municipales y los días sin actividad de cada tribunal;
+- las reglas especiales de inicio del plazo del art. 231 del CPC (por ejemplo, notificación electrónica o por edicto);
+- los plazos dobles, como los de la Hacienda Pública y la Defensoría.
+
+El cálculo ayuda en la clasificación, pero no reemplaza la revisión de quien firma el escrito. Ese aviso está en la propia pantalla, al lado del resultado.
+
+## Pruebas, siempre
+
+El código de calendario parece correcto hasta el día en que no lo es. Las pruebas cubren la fecha de Pascua, los días sin actividad judicial, un plazo de 15 días hábiles que atraviesa fin de semana y feriado, un plazo suspendido por el receso, días corridos con vencimiento prorrogado y plazos en horas, que quedan sin fecha calculada.
+
+El código completo está en [GitHub](https://github.com/Caiorhcp/sapo-juridico). Si tu estudio necesita una herramienta así, a medida, [conversemos](/es/sobre).
