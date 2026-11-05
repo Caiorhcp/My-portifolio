@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Cta } from "@/components/Cta";
+import { Hero } from "@/components/Hero";
 import { JsonLd } from "@/components/JsonLd";
 import { PostItem } from "@/components/PostItem";
 import { ProjectTile } from "@/components/ProjectTile";
@@ -25,46 +26,17 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
 
   return (
     <>
-      {/* Herói */}
-      <section className="mx-3 overflow-hidden rounded-page bg-field text-on-field">
-        <div className="mx-auto grid max-w-6xl items-end gap-10 px-5 pt-16 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:pt-24">
-          <Reveal className="pb-16 lg:pb-24">
-            <RevealItem>
-              <h1 className="font-serif text-display font-light tracking-[-0.03em] text-balance">{d.home.h1}</h1>
-            </RevealItem>
-            <RevealItem>
-              <p className="mt-7 max-w-[46ch] text-lg">{d.home.lead}</p>
-            </RevealItem>
-            <RevealItem className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
-              <a
-                href={whatsapp(d.whatsapp.default)}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-page bg-on-field px-6 py-3.5 font-medium text-field transition-transform hover:-translate-y-0.5 active:scale-95"
-              >
-                {d.nav.quote}
-              </a>
-              <Link href={`/${lang}/projetos`} className="group inline-flex items-center gap-2 font-medium">
-                {d.home.seeProjects}
-                <ArrowRight size={18} aria-hidden className="transition-transform group-hover:translate-x-1" />
-              </Link>
-            </RevealItem>
-          </Reveal>
-          <Reveal className="self-end">
-            <RevealItem>
-              <Image
-                src="/img/sapo-ficha.webp"
-                alt={d.home.heroAlt}
-                width={1100}
-                height={1375}
-                priority
-                sizes="(min-width: 1024px) 480px, 90vw"
-                className="mx-auto -mb-[38%] w-full max-w-[30rem] rounded-t-page"
-              />
-            </RevealItem>
-          </Reveal>
-        </div>
-      </section>
+      <Hero
+        h1={d.home.h1}
+        prefix={d.home.prefix}
+        words={d.home.words}
+        lead={d.home.lead}
+        quote={d.nav.quote}
+        quoteHref={whatsapp(d.whatsapp.default)}
+        seeProjects={d.home.seeProjects}
+        projectsHref={`/${lang}/projetos`}
+        demo={d.home.demo}
+      />
 
       {/* Serviços */}
       <section aria-labelledby="ajuda" className="mx-auto max-w-6xl px-5 pt-32 sm:px-8">

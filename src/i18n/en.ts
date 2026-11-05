@@ -44,9 +44,42 @@ export const en: Dictionary = {
   },
   home: {
     h1: "I build websites, apps and systems",
+    prefix: "I build",
+    words: ["websites", "apps", "systems"],
+    demo: {
+      tabsLabel: "Project type",
+      tabs: ["Website", "App", "System"],
+      site: {
+        url: "yourbusiness.com",
+        brand: "Your Business",
+        menu: ["Home", "Services", "Contact"],
+        title: "Found on Google, chosen on mobile",
+        text: "A fast page that looks great on any screen, with the contact button always at hand.",
+        button: "Get a quote",
+      },
+      app: {
+        title: "Schedule",
+        subtitle: "Today · 3 appointments",
+        items: [
+          { time: "09:00", name: "Anna Smith", kind: "First visit" },
+          { time: "10:30", name: "Peter Lee", kind: "Follow-up" },
+          { time: "14:00", name: "Julia Reed", kind: "Assessment" },
+        ],
+        notice: "New appointment confirmed",
+      },
+      system: {
+        title: "Sales dashboard",
+        kpis: [
+          { label: "Orders", value: 1284, prefix: "", suffix: "" },
+          { label: "Revenue", value: 48, prefix: "$", suffix: "k" },
+          { label: "Satisfaction", value: 92, prefix: "", suffix: "%" },
+        ],
+        chart: "Orders this week",
+        days: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      },
+    },
     lead: "I'm Caio Gonçalves, a full stack developer. From the website that shows up on Google to the app and the system that keeps your business organized.",
     seeProjects: "See projects",
-    heroAlt: "Case sheet from S.A.P.O., a legal analysis system built by Caio Gonçalves",
     helpTitle: "How I can help",
     services: [
       {

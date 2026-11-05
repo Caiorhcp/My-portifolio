@@ -44,9 +44,42 @@ export const es: Dictionary = {
   },
   home: {
     h1: "Desarrollo sitios web, apps y sistemas",
+    prefix: "Desarrollo",
+    words: ["sitios web", "apps", "sistemas"],
+    demo: {
+      tabsLabel: "Tipo de proyecto",
+      tabs: ["Sitio web", "App", "Sistema"],
+      site: {
+        url: "tunegocio.com",
+        brand: "Tu Negocio",
+        menu: ["Inicio", "Servicios", "Contacto"],
+        title: "Encontrado en Google, elegido en el móvil",
+        text: "Una página rápida, bonita en cualquier pantalla y con el botón de contacto siempre a mano.",
+        button: "Pedir presupuesto",
+      },
+      app: {
+        title: "Agenda",
+        subtitle: "Hoy · 3 citas",
+        items: [
+          { time: "09:00", name: "Ana Torres", kind: "Primera consulta" },
+          { time: "10:30", name: "Pablo Ruiz", kind: "Control" },
+          { time: "14:00", name: "Julia Díaz", kind: "Evaluación" },
+        ],
+        notice: "Nueva cita confirmada",
+      },
+      system: {
+        title: "Panel de ventas",
+        kpis: [
+          { label: "Pedidos", value: 1284, prefix: "", suffix: "" },
+          { label: "Facturación", value: 48, prefix: "US$ ", suffix: " mil" },
+          { label: "Satisfacción", value: 92, prefix: "", suffix: "%" },
+        ],
+        chart: "Pedidos de la semana",
+        days: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+      },
+    },
     lead: "Soy Caio Gonçalves, desarrollador full stack. Desde el sitio web que aparece en Google hasta la app y el sistema que organizan tu empresa.",
     seeProjects: "Ver proyectos",
-    heroAlt: "Ficha del proceso de S.A.P.O., sistema de análisis jurídico creado por Caio Gonçalves",
     helpTitle: "Cómo puedo ayudarte",
     services: [
       {
