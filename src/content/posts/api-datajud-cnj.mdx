@@ -1,0 +1,63 @@
+O **Datajud** é a base nacional de dados do Poder Judiciário, mantida pelo CNJ. Ele tem uma API pública que devolve os metadados de um processo: classe, assuntos, órgão julgador e a lista de movimentações. Integrei essa API ao [S.A.P.O.](/projetos/sapo) e anotei aqui o que eu gostaria de ter sabido antes.
+
+## A chave de acesso
+
+A API pede uma chave no cabeçalho `Authorization`, no formato `APIKey <chave>`. A chave é pública e fica na [wiki do Datajud](https://datajud-wiki.cnj.jus.br/api-publica/acesso), mas pode mudar a qualquer momento. Por isso ela mora numa variável de ambiente, nunca no código.
+
+A API também não aceita chamadas direto do navegador. A consulta precisa passar por um servidor, e no S.A.P.O. isso virou uma rota do Next.js (`/api/processo`). É a única parte do sistema que usa servidor, e só o número do processo é enviado.
+
+## Cada tribunal é um índice
+
+Não existe um endereço único para "buscar processo". Cada tribunal tem o seu índice: `api_publica_tjce`, `api_publica_trf5`, `api_publica_trt7` e assim por diante. Então, antes de consultar, é preciso descobrir o tribunal.
+
+A boa notícia é que o próprio número do processo diz isso. O número único da Resolução CNJ 65/2008 tem o formato `NNNNNNN-DD.AAAA.J.TR.OOOO`:
+
+- `J` é o segmento da Justiça: 4 é a Federal, 5 a do Trabalho, 8 a Estadual, e assim por diante;
+- `TR` é o tribunal dentro do segmento. Na Justiça Estadual, os códigos seguem a ordem alfabética das UFs: 01 é o Acre, 06 é o Ceará, 26 é São Paulo.
+
+Com esses dois campos dá para montar o índice. Um processo com `.8.06.` vai para o TJCE; um com `.4.05.`, para o TRF5. Vale saber também que o STF não está na API pública.
+
+## Valide antes de consultar
+
+O `DD` do número é um dígito verificador calculado pela norma ISO 7064 (módulo 97). Conferir isso antes de chamar a API evita gastar uma consulta lenta com um número digitado errado:
+
+```ts
+// DD = 98 - (N AAAA J TR OOOO 00 mod 97)
+const expected = 98 - Number(BigInt(n + year + j + tr + origin + "00") % 97n);
+if (expected !== Number(dv)) return null;
+```
+
+O número tem 20 dígitos, grande demais para um `number` comum do JavaScript sem perder precisão. Daí o `BigInt`.
+
+## Ela é lenta, e tudo bem
+
+Nos meus testes, cada consulta levou de **30 a 50 segundos**. Não é bug do seu código. Na prática, isso pediu três cuidados:
+
+- **Tempo limite generoso.** A rota espera até 55 segundos antes de desistir, e a função da Vercel foi configurada para durar até 60.
+- **Interface honesta.** Enquanto espera, a tela avisa que a consulta pode demorar.
+- **Erros com nome.** Quando o Datajud não responde a tempo, a mensagem diz isso, em vez de um "erro inesperado".
+
+## O limite de requisições
+
+A API devolve `429` quando você passa do limite. Em vez de tentar de novo em loop, o S.A.P.O. explica que o Datajud limitou as consultas e oferece o caminho alternativo: abrir os autos no site do tribunal, baixar o PDF e enviar para a análise.
+
+## Movimentações têm código
+
+Cada movimentação vem com um nome e um código da **Tabela Processual Unificada (TPU)** do CNJ. Use o código, não o texto. O nome às vezes vem só com a parte final: o arquivamento definitivo, por exemplo, pode aparecer apenas como "Definitivo". Pelo código (246), a identificação não falha. Alguns que usei:
+
+| Código | Movimento |
+| --- | --- |
+| 26 | Distribuição |
+| 970 | Audiência |
+| 246 | Arquivamento definitivo |
+
+Com os marcos identificados, dá para calcular o tempo de tramitação e avisar quando um processo está parado há mais de 90 dias.
+
+## Resumo
+
+- Guarde a chave em variável de ambiente e chame a API pelo servidor.
+- Descubra o tribunal pelo número CNJ e valide o dígito verificador antes.
+- Espere respostas lentas e trate `429` e tempo esgotado com mensagens claras.
+- Classifique movimentações pelo código da TPU.
+
+O código da integração está no [repositório do S.A.P.O.](https://github.com/Caiorhcp/sapo-juridico). Se você está construindo algo para escritórios ou departamentos jurídicos e quer conversar, [me chame](/sobre).

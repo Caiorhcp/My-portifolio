@@ -1,0 +1,76 @@
+Quando comecei o [S.A.P.O.](/projetos/sapo), a regra era uma só: o PDF de um processo não podia sair do computador de quem usa. Documento jurídico tem nome, CPF, endereço e, às vezes, informação de saúde. Mandar isso para um servidor só para descobrir se a página é um despacho ou uma sentença não fazia sentido.
+
+Então o modelo tinha que rodar no navegador. Este post conta como fiz isso sem TensorFlow.js, sem ONNX e sem nenhuma biblioteca de machine learning no front-end.
+
+## O problema
+
+Classificar cada página de um processo em seis tipos: acórdão, agravo em recurso extraordinário, despacho, petição de RE, sentença ou "outros" (certidões, procurações e o resto).
+
+Para treinar usei o **VICTOR**, um conjunto de dados público com páginas reais de recursos extraordinários do STF, rotuladas por especialistas do tribunal ([Luz de Araujo et al., LREC 2020](https://aclanthology.org/2020.lrec-1.181/)). A versão pequena tem cerca de 149 mil páginas, já divididas em treino, validação e teste. Usar a mesma divisão do artigo me deu algo valioso: um número publicado para comparar.
+
+## Por que não uma rede neural
+
+A tentação era usar um modelo grande. Mas três coisas pesaram:
+
+- **Tamanho.** Tudo o que o navegador baixa conta. Um modelo de centenas de megabytes mataria a experiência no celular.
+- **Probabilidades confiáveis.** Para a interface mostrar "Petição de RE, 81%", a probabilidade precisa significar alguma coisa.
+- **O baseline.** No artigo, o melhor resultado foi de um SVM linear, não de uma rede.
+
+Fiquei com o clássico: **TF-IDF** com unigramas e bigramas (30 mil termos) e **regressão logística**. Em Python, com scikit-learn, são poucas linhas.
+
+## O resultado
+
+No conjunto de teste, com a mesma divisão do artigo original:
+
+| Modelo | F1 macro | F1 ponderado |
+| --- | --- | --- |
+| TF-IDF + regressão logística (S.A.P.O.) | **78,2** | **94,7** |
+| SVM linear (artigo original) | 76,3 | 94,3 |
+| CNN (artigo original) | 75,8 | 94,7 |
+
+Um modelo simples, bem ajustado, passou o baseline publicado. E o arquivo exportado ficou com 1,4 MB comprimido.
+
+## Levando o modelo para o navegador
+
+O truque é perceber que, depois de treinada, uma regressão logística sobre TF-IDF é só aritmética. Exportei para um JSON tudo o que o scikit-learn guarda: o vocabulário, o IDF de cada termo, a matriz de pesos e o intercepto de cada classe.
+
+No TypeScript, a inferência repete os mesmos passos:
+
+1. Normalizar o texto do jeito que o Python normalizava (minúsculas, troca de e-mails e links por marcadores, remoção de stopwords).
+2. Contar unigramas e bigramas que existem no vocabulário.
+3. Aplicar o TF sublinear (`1 + log(contagem)`) vezes o IDF e normalizar o vetor pela norma L2.
+4. Multiplicar pelos pesos, somar o intercepto e passar pelo softmax.
+
+```ts
+const logits = [...this.model.intercept];
+for (const [i, v] of x) {
+  const w = this.model.coef[i];
+  for (let c = 0; c < logits.length; c++) logits[c] += w[c] * (v / norm);
+}
+const max = Math.max(...logits);
+const exp = logits.map((l) => Math.exp(l - max));
+const sum = exp.reduce((a, b) => a + b, 0);
+return exp.map((e) => e / sum);
+```
+
+Subtrair o maior logit antes da exponencial evita estouro numérico. É o mesmo cuidado que as bibliotecas tomam por baixo dos panos.
+
+## O teste que dá confiança
+
+Reescrever um modelo em outra linguagem é pedir para errar em silêncio. Uma vírgula na normalização e as probabilidades mudam sem nenhum erro aparecer.
+
+Por isso a verificação acontece dos dois lados. No Python, o treino confere a inferência feita a partir do JSON contra o scikit-learn em 500 páginas do teste. No TypeScript, um teste lê textos com as probabilidades calculadas pelo Python, roda a inferência e compara número a número, até a quarta casa decimal. Se alguém mexer na normalização de um lado e esquecer do outro, o CI quebra.
+
+## O detalhe que quase passou
+
+No VICTOR, 89% das páginas são "outros", porque cada processo vem inteiro, com certidões e procurações. O modelo aprende essa proporção e, na dúvida, chuta "outros".
+
+Só que no site a pessoa envia **uma peça por vez**. A distribuição é outra. A correção foi dividir cada probabilidade pela frequência da classe no treino e renormalizar, o que equivale a supor que todas as classes são igualmente prováveis. O recall médio por classe subiu de 74,2 para 86,8. O F1 macro do benchmark cai, e eu deixo isso documentado no README: é uma escolha pensada para o uso real, não para a tabela.
+
+## O que fica
+
+- Nem todo problema de IA precisa de GPU ou de servidor. Um modelo linear bem treinado resolve muita coisa e roda em qualquer celular.
+- Quando você porta um modelo, o teste de paridade não é opcional.
+- Olhe para a distribuição dos dados de quem vai usar, não só para a do dataset.
+
+O código está no [GitHub](https://github.com/Caiorhcp/sapo-juridico) e o sistema está no ar em [sapo-juridico.vercel.app](https://sapo-juridico.vercel.app). Dá para testar com o documento de exemplo, sem enviar nada a ninguém.
