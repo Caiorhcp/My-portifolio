@@ -6,13 +6,12 @@ import { PROJECTS } from "@/lib/projects";
 
 export const metadata: Metadata = {
   title: "Projetos",
-  description: "Projetos de Caio Gonçalves: IA jurídica no navegador, app e API de eventos, APIs em NestJS e Node.js.",
+  description: "Projetos de Caio Gonçalves: o site do Laboratório Vicente Lemos e o S.A.P.O., IA jurídica que roda no navegador.",
   alternates: { canonical: "/projetos" },
   openGraph: { url: "/projetos" },
 };
 
 export default function ProjectsPage() {
-  const [featured, ...others] = PROJECTS;
   return (
     <>
       <Reveal className="mx-auto max-w-6xl px-5 pt-16 sm:px-8 lg:pt-24">
@@ -21,15 +20,11 @@ export default function ProjectsPage() {
         </RevealItem>
         <RevealItem>
           <p className="mt-6 max-w-[52ch] text-lg">
-            Do modelo de IA que roda no navegador ao app de eventos feito em equipe. Os projetos da Ponto Env são de
-            clientes e ficam de fora desta lista.
+            Do site de uma rede de laboratórios ao modelo de IA que analisa processos sem sair do navegador.
           </p>
         </RevealItem>
-        <RevealItem className="mt-16">
-          <ProjectTile project={featured} large />
-        </RevealItem>
         <div className="mt-16 grid gap-14 md:grid-cols-2 md:gap-10">
-          {others.map((p) => (
+          {PROJECTS.map((p) => (
             <RevealItem key={p.slug}>
               <ProjectTile project={p} />
             </RevealItem>

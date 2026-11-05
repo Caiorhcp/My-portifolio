@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CodeBlock } from "@/components/CodeBlock";
 import { Cta } from "@/components/Cta";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal, RevealItem } from "@/components/Reveal";
@@ -68,7 +67,6 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
               <div>
                 <dt className="text-small text-soft">Papel</dt>
                 <dd>{p.role}</dd>
-                {p.team && <dd className="text-small text-soft">{p.team}</dd>}
               </div>
               <div>
                 <dt className="text-small text-soft">Tecnologias</dt>
@@ -80,41 +78,38 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
                     Abrir o projeto <ArrowUpRight size={16} aria-hidden />
                   </a>
                 )}
-                <a href={p.repo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-brand underline underline-offset-4">
-                  Código no GitHub <ArrowUpRight size={16} aria-hidden />
-                </a>
+                {p.repo ? (
+                  <a href={p.repo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-medium text-brand underline underline-offset-4">
+                    Código no GitHub <ArrowUpRight size={16} aria-hidden />
+                  </a>
+                ) : (
+                  <p className="text-small text-soft">Código privado, de cliente.</p>
+                )}
               </div>
             </dl>
           </RevealItem>
         </Reveal>
 
         <Reveal className="mt-20 space-y-10">
-          {p.images?.map((img, i) => (
+          {p.images.map((img, i) => (
             <RevealItem key={img.src}>
               <figure className={`rounded-page px-[6%] pt-[6%] ${i % 2 ? "bg-ochre-soft" : "bg-brand-soft"}`}>
-                <Image src={img.src} alt={img.alt} width={1100} height={1375} sizes="(min-width: 1152px) 960px, 90vw" className="mx-auto max-h-[46rem] w-auto rounded-t-page object-cover object-top" />
+                <Image src={img.src} alt={img.alt} width={img.width} height={img.height} sizes="(min-width: 1152px) 960px, 90vw" className="mx-auto max-h-[46rem] w-auto rounded-t-page object-cover object-top" />
                 <figcaption className="sr-only">{img.alt}</figcaption>
               </figure>
             </RevealItem>
           ))}
-          {p.code && (
-            <RevealItem>
-              <div className="rounded-page bg-sunken p-[5%]">
-                <CodeBlock file={p.code.file} source={p.code.source} />
-              </div>
-            </RevealItem>
-          )}
         </Reveal>
       </article>
       <Cta title="Quer um projeto assim para a sua empresa?" />
       <JsonLd
         data={{
           "@context": "https://schema.org",
-          "@type": "SoftwareSourceCode",
+          "@type": "CreativeWork",
           name: p.name,
           description: p.description,
-          codeRepository: p.repo,
-          programmingLanguage: p.stack,
+          ...(p.site ? { sameAs: p.site } : {}),
+          keywords: p.stack.join(", "),
           url: absolute(`/projetos/${p.slug}`),
           author: { "@id": absolute("/#caio") },
           dateCreated: p.year,

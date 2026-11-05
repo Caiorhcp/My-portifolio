@@ -55,8 +55,6 @@ const FAQ = [
 ];
 
 export default function Home() {
-  const [featured, ...others] = PROJECTS;
-
   return (
     <>
       {/* Herói */}
@@ -146,11 +144,8 @@ export default function Home() {
               Ver todos
             </Link>
           </RevealItem>
-          <RevealItem className="mt-12">
-            <ProjectTile project={featured} large />
-          </RevealItem>
-          <div className="mt-16 grid gap-14 md:grid-cols-3 md:gap-8">
-            {others.slice(0, 3).map((p) => (
+          <div className="mt-12 grid gap-14 md:grid-cols-2 md:gap-10">
+            {PROJECTS.map((p) => (
               <RevealItem key={p.slug}>
                 <ProjectTile project={p} />
               </RevealItem>
