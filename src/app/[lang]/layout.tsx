@@ -3,6 +3,7 @@ import { Inter, Source_Serif_4 } from "next/font/google";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { JsonLd } from "@/components/JsonLd";
+import { LanguageFloat } from "@/components/LanguageFloat";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { HTML_LANG, OG_LOCALE } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -87,6 +88,7 @@ export default async function RootLayout({ children, params }: LayoutProps<"/[la
         <Header lang={lang} dict={d} />
         <main id="conteudo">{children}</main>
         <Footer lang={lang} dict={d} />
+        <LanguageFloat lang={lang} label={d.nav.language} />
         <WhatsAppFloat dict={d} />
         <JsonLd data={person} />
       </body>

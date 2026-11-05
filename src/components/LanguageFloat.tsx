@@ -1,0 +1,77 @@
+"use client";
+
+import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { HTML_LANG, type Locale, LOCALE_COOKIE, LOCALE_NAME, LOCALES } from "@/i18n/config";
+import { Flag } from "./Flag";
+
+/** Botão flutuante acima do WhatsApp: abre um menu com as línguas e suas bandeiras. */
+export function LanguageFloat({ lang, label }: { lang: Locale; label: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const rest = usePathname().replace(/^\/(pt|en|es)(?=\/|$)/, "");
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="fixed right-4 bottom-[5.25rem] z-50 sm:right-6 sm:bottom-[6.25rem]">
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            id="menu-idioma"
+            aria-label={label}
+            initial={{ opacity: 0, y: 8, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 8, scale: 0.96 }}
+            transition={{ duration: 0.18 }}
+            className="absolute right-0 bottom-full mb-3 w-48 origin-bottom-right rounded-page bg-surface p-1.5 shadow-lg"
+          >
+            {LOCALES.map((l) => (
+              <li key={l}>
+                <Link
+                  href={`/${l}${rest}`}
+                  hrefLang={HTML_LANG[l]}
+                  lang={HTML_LANG[l]}
+                  aria-current={l === lang ? "true" : undefined}
+                  onClick={() => {
+                    document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
+                    setOpen(false);
+                  }}
+                  className={`flex items-center gap-3 rounded-[6px] px-3 py-2.5 transition-colors ${
+                    l === lang ? "bg-brand-soft font-medium" : "hover:bg-sunken"
+                  }`}
+                >
+                  <Flag locale={l} className="size-6 shrink-0 rounded-full" />
+                  {LOCALE_NAME[l]}
+                </Link>
+              </li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-label={`${label}: ${LOCALE_NAME[lang]}`}
+        aria-expanded={open}
+        aria-controls="menu-idioma"
+        className="grid size-14 place-items-center rounded-full bg-surface shadow-lg transition-transform hover:scale-105 active:scale-95"
+      >
+        <Flag locale={lang} className="size-8 rounded-full" />
+      </button>
+    </div>
+  );
+}
