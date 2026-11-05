@@ -1,30 +1,21 @@
-# React + TypeScript + Vite
+# Portfólio · Caio Gonçalves
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Portfólio pessoal de Caio Gonçalves, desenvolvedor full stack. No ar em https://portifolio-caiopft.vercel.app.
 
-Currently, two official plugins are available:
+- **Projetos**, com o S.A.P.O. em destaque (IA jurídica que roda no navegador).
+- **Trajetória** e **sobre**, a partir do currículo.
+- **Ferramentas**: tocar numa tecnologia filtra os projetos em que ela aparece.
+- Metade da tela fica fixa e mostra código real dos projetos, telas do S.A.P.O. ou o projeto sob o mouse.
+- Tema claro e escuro nas cores do PRUMO (papel bege, verde petróleo, ocre).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Stack
 
-## Expanding the ESLint configuration
+Vite, React 19, TypeScript, Tailwind CSS 4, Motion e lucide-react.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm install
+npm run dev     # http://localhost:5173
+npm run build
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+O conteúdo fica em `src/pages/Home/data.ts`; o currículo em `public/curriculo-caio-goncalves.pdf`.

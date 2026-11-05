@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.taste-skill
+tsconfig.tsbuildinfo
+npm-dev.log
+preview.log
