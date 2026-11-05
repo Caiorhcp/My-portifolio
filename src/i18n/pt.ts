@@ -146,8 +146,8 @@ export const pt = {
   },
   projects: {
     title: "Projetos",
-    lead: "Do site de uma rede de laboratórios ao modelo de IA que analisa processos sem sair do navegador.",
-    description: "Projetos de Caio Gonçalves: o site do Laboratório Vicente Lemos e o S.A.P.O., IA jurídica que roda no navegador.",
+    lead: "Do Veritas, que ensina convenções a agentes de IA, ao site de uma rede de laboratórios e ao modelo que analisa processos sem sair do navegador.",
+    description: "Projetos de Caio Gonçalves: o Veritas (convenções open source para agentes de IA), o site do Laboratório Vicente Lemos e o S.A.P.O., IA jurídica que roda no navegador.",
     back: "← Todos os projetos",
     highlights: "Destaques",
     year: "Ano",

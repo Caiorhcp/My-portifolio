@@ -147,8 +147,8 @@ export const en: Dictionary = {
   },
   projects: {
     title: "Projects",
-    lead: "From the website of a network of medical labs to an AI model that analyzes legal case files without leaving the browser.",
-    description: "Projects by Caio Gonçalves: the website for Laboratório Vicente Lemos and S.A.P.O., legal AI that runs in the browser.",
+    lead: "From Veritas, which teaches conventions to AI agents, to the website of a network of medical labs and a model that analyzes legal case files without leaving the browser.",
+    description: "Projects by Caio Gonçalves: Veritas (open source conventions for AI agents), the website for Laboratório Vicente Lemos and S.A.P.O., legal AI that runs in the browser.",
     back: "← All projects",
     highlights: "Highlights",
     year: "Year",

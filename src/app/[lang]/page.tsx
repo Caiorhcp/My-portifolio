@@ -79,7 +79,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
               {d.home.seeAll}
             </Link>
           </RevealItem>
-          <div className="mt-12 grid gap-14 md:grid-cols-2 md:gap-10">
+          <div className="mt-12 grid gap-14 md:grid-cols-2 md:gap-10 lg:grid-cols-3 lg:gap-8">
             {PROJECTS.map((p) => (
               <RevealItem key={p.slug}>
                 <ProjectTile project={p} lang={lang} />

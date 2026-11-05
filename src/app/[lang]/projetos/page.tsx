@@ -25,7 +25,7 @@ export default async function ProjectsPage({ params }: PageProps<"/[lang]/projet
         <RevealItem>
           <p className="mt-6 max-w-[52ch] text-lg">{d.projects.lead}</p>
         </RevealItem>
-        <div className="mt-16 grid gap-14 md:grid-cols-2 md:gap-10">
+        <div className="mt-16 grid gap-14 md:grid-cols-2 md:gap-10 lg:grid-cols-3 lg:gap-8">
           {PROJECTS.map((p) => (
             <RevealItem key={p.slug}>
               <ProjectTile project={p} lang={lang} />

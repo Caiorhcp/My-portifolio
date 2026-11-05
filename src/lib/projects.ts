@@ -26,6 +26,87 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
+    slug: "veritas",
+    name: "Veritas",
+    year: "2026",
+    stack: ["Claude Code", "Next.js", "TypeScript", "Node.js", "Python"],
+    repo: "https://github.com/Caiorhcp/veritas",
+    site: "https://veritas-caiorhcp.vercel.app",
+    images: [
+      { src: "/img/veritas-inicio.webp", width: 1440, height: 900 },
+      { src: "/img/veritas-stacks.webp", width: 1440, height: 900 },
+      { src: "/img/veritas-skill.webp", width: 1440, height: 900 },
+      { src: "/img/veritas-ponytail.webp", width: 1440, height: 900 },
+      { src: "/img/veritas-celular.webp", width: 390, height: 844 },
+    ],
+    tone: "brand",
+    text: {
+      pt: {
+        tagline: "Convenções de engenharia para agentes de IA, open source",
+        description:
+          "Um plugin para Claude Code com uma convenção por stack (Vite, Next.js, NestJS, Django, React Native, Python, Bun + Hono) e regras gerais de princípios, LGPD e atomic design. Vem com a CLI create-veritas, que cria um projeto já funcionando com as convenções escritas dentro dele, para qualquer assistente de IA ler antes de escrever código, e um site de documentação em três idiomas.",
+        role: "Autor: plugin, CLI, site e documentação",
+        highlights: [
+          "19 skills em português, cada uma conferida contra a versão da lib que descreve, com 21 testes validando o formato.",
+          "CLI create-veritas: gera projetos Vite e Next.js que compilam de primeira, com .veritas/, AGENTS.md e CLAUDE.md; init adiciona as convenções a um projeto existente.",
+          "Toda pergunta da CLI tem uma flag; num terminal sem ninguém, resposta que falta é erro, nunca um padrão escolhido em silêncio.",
+          "Site em Next.js com uma página por skill, lida direto do plugin, busca com a tecla / e versões em português, inglês e espanhol.",
+          "Marketplace que também distribui o Ponytail, de Dietrich Gebert, para gastar menos tokens.",
+          "Licença MIT, inspirado no Prumo, da St. Joseph Works.",
+        ],
+        alts: [
+          "Página inicial do Veritas com o terminal animado criando um projeto",
+          "Cartões das convenções por stack no site do Veritas",
+          "Página da skill nextjs no site do Veritas",
+          "Seção do Ponytail no site do Veritas, com o crédito ao autor",
+          "Site do Veritas no celular",
+        ],
+      },
+      en: {
+        tagline: "Open source engineering conventions for AI agents",
+        description:
+          "A Claude Code plugin with one convention per stack (Vite, Next.js, NestJS, Django, React Native, Python, Bun + Hono) plus general rules on principles, data protection and atomic design. It ships with the create-veritas CLI, which creates a working project with the conventions written inside it for any AI assistant to read before writing code, and a documentation site in three languages.",
+        role: "Author: plugin, CLI, website and docs",
+        highlights: [
+          "19 skills written in Portuguese, each checked against the version of the library it describes, with 21 tests validating the format.",
+          "create-veritas CLI: generates Vite and Next.js projects that build on the first try, with .veritas/, AGENTS.md and CLAUDE.md; init adds the conventions to an existing project.",
+          "Every CLI question has a flag; in a terminal with no one on the other side, a missing answer is an error, never a silently chosen default.",
+          "Next.js website with one page per skill, read straight from the plugin, search with the / key and versions in Portuguese, English and Spanish.",
+          "A marketplace that also ships Ponytail, by Dietrich Gebert, to spend fewer tokens.",
+          "MIT license, inspired by Prumo, by St. Joseph Works.",
+        ],
+        alts: [
+          "Veritas home page with the animated terminal creating a project",
+          "Cards for the per-stack conventions on the Veritas website",
+          "The nextjs skill page on the Veritas website",
+          "Ponytail section on the Veritas website, crediting its author",
+          "Veritas website on a phone",
+        ],
+      },
+      es: {
+        tagline: "Convenciones de ingeniería para agentes de IA, open source",
+        description:
+          "Un plugin para Claude Code con una convención por stack (Vite, Next.js, NestJS, Django, React Native, Python, Bun + Hono) y reglas generales de principios, protección de datos y atomic design. Viene con la CLI create-veritas, que crea un proyecto que ya funciona con las convenciones escritas dentro, para que cualquier asistente de IA las lea antes de escribir código, y un sitio de documentación en tres idiomas.",
+        role: "Autor: plugin, CLI, sitio y documentación",
+        highlights: [
+          "19 skills en portugués, cada una revisada contra la versión de la biblioteca que describe, con 21 pruebas que validan el formato.",
+          "CLI create-veritas: genera proyectos Vite y Next.js que compilan a la primera, con .veritas/, AGENTS.md y CLAUDE.md; init agrega las convenciones a un proyecto existente.",
+          "Cada pregunta de la CLI tiene una flag; en un terminal sin nadie del otro lado, la respuesta que falta es un error, nunca un valor elegido en silencio.",
+          "Sitio en Next.js con una página por skill, leída directo del plugin, búsqueda con la tecla / y versiones en portugués, inglés y español.",
+          "Un marketplace que también distribuye Ponytail, de Dietrich Gebert, para gastar menos tokens.",
+          "Licencia MIT, inspirado en Prumo, de St. Joseph Works.",
+        ],
+        alts: [
+          "Página de inicio de Veritas con el terminal animado creando un proyecto",
+          "Tarjetas de las convenciones por stack en el sitio de Veritas",
+          "Página de la skill nextjs en el sitio de Veritas",
+          "Sección de Ponytail en el sitio de Veritas, con el crédito a su autor",
+          "Sitio de Veritas en el móvil",
+        ],
+      },
+    },
+  },
+  {
     slug: "vicente-lemos",
     name: "Laboratório Vicente Lemos",
     year: "2026",
