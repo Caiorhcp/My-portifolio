@@ -1,5 +1,5 @@
 export const SITE = {
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://portifolio-caiopft.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://caio-goncalves.vercel.app",
   name: "Caio Gonçalves",
   city: "Missão Velha",
   region: "CE",

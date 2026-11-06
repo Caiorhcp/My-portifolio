@@ -31,7 +31,7 @@ export const PROJECTS: Project[] = [
     year: "2026",
     stack: ["Claude Code", "Next.js", "TypeScript", "Node.js", "Python"],
     repo: "https://github.com/Caiorhcp/veritas",
-    site: "https://veritas-caiorhcp.vercel.app",
+    site: "https://veritasdev.vercel.app",
     images: [
       { src: "/img/veritas-inicio.webp", width: 1440, height: 900 },
       { src: "/img/veritas-stacks.webp", width: 1440, height: 900 },

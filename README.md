@@ -1,7 +1,7 @@
 # Caio Gonçalves · portfólio e blog
 
 Site pessoal de Caio Gonçalves, desenvolvedor full stack: serviços, projetos, blog e contato para orçamento.
-No ar em https://portifolio-caiopft.vercel.app.
+No ar em https://caio-goncalves.vercel.app.
 
 ## Stack
 
