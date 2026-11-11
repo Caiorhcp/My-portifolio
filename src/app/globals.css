@@ -104,6 +104,7 @@ body {
 .post code { font-size: 0.9em; background: var(--sunken); padding: 0.1em 0.35em; border-radius: 4px; }
 .post pre { background: var(--surface); padding: 1.1rem 1.25rem; border-radius: var(--radius-page); overflow-x: auto; font-size: 0.875rem; line-height: 1.65; }
 .post pre code { background: none; padding: 0; font-size: inherit; }
+.post img { border-radius: var(--radius-page); }
 
 /* Perguntas frequentes: abre com animação onde o navegador permite */
 details::details-content { block-size: 0; overflow: clip; transition: block-size 0.35s, content-visibility 0.35s allow-discrete; }

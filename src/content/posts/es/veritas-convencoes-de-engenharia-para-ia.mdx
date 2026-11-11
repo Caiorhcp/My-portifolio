@@ -1,0 +1,103 @@
+Todo equipo tiene una forma de hacer las cosas. Dónde vive la regla de negocio, qué biblioteca de formularios usar, qué nunca va al log. Casi siempre eso vive en la cabeza de quien lleva más tiempo en el proyecto, o en un documento que nadie abre.
+
+Con asistentes de IA escribiendo buena parte del código, ese problema se volvió más visible. El agente no es malo: elige entre cinco formas defendibles de hacer lo mismo, y cada sesión elige una distinta. [Veritas](/es/projetos/veritas) nació para quitarle esa elección.
+
+## La idea: una skill por stack
+
+Veritas es un plugin para Claude Code con convenciones de ingeniería en forma de **skills**. Cada skill es un archivo `SKILL.md` con un frontmatter corto y el resto en Markdown:
+
+```yaml
+---
+name: nextjs
+description: Use ao criar ou editar um projeto Next.js com App Router — Server Components e 'use client', Server Actions, rotas em src/app/, ...
+metadata:
+  escopo: frontend
+  versao_verificada: "16.2.4"
+---
+```
+
+La `description` es lo que hace que la skill entre en el momento justo. Dice **cuándo** usarla, con los términos que un desarrollador usaría al pedir algo. Si pidió algo de Django, entra la convención de Django; si tocó datos personales, entra la de LGPD (la ley brasileña de protección de datos).
+
+Hoy son 20 skills: una por stack (Vite, Next.js, NestJS, Django, React Native, Python, Bun + Hono) y otras generales, como principios, LGPD, atomic design y proyecto existente. Cada una registra en `versao_verificada` la versión de la documentación oficial contra la que fue revisada. Cuando la biblioteca cambia, se puede saber qué regla necesita revisión.
+
+Algunas decisiones que tomé en el camino:
+
+- **El eje es el stack, no el proyecto.** Una convención que vale solo para un repositorio va en el `CLAUDE.md` de ese repositorio, no en Veritas.
+- **Política de tokens.** En el `SKILL.md` queda lo que se consulta todo el tiempo: prohibiciones, stack, el núcleo. El detalle va a archivos de apoyo al lado, que se cargan solo cuando el tema lo pide. Un `SKILL.md` de 20 KB o más reprueba en la prueba.
+- **Origen registrado.** Cada skill termina diciendo de dónde vino la regla y cuándo.
+
+## Dentro del proyecto, no solo en el plugin
+
+Un plugin resuelve el problema para quien usa Claude Code. Pero un proyecto pasa por muchas manos y muchos asistentes. Por eso la CLI `create-veritas`, [publicada en npm](https://www.npmjs.com/package/create-veritas), escribe las convenciones **dentro del repositorio**:
+
+```
+.veritas/
+  INDEX.md          qual convenção vale quando
+  VERSION           versão do create-veritas que escreveu
+  nextjs/SKILL.md   a skill da stack e os arquivos ao lado dela
+  principios/  lgpd/  atomic-design/
+AGENTS.md
+CLAUDE.md
+```
+
+El `AGENTS.md` y el `CLAUDE.md` reciben un bloque pequeño que apunta a `.veritas/INDEX.md`. Cualquier asistente que abra el repositorio (Claude Code, Codex, Cursor, Copilot) lee ese archivo antes de tocar el código.
+
+Para un proyecto nuevo, `npm create veritas@latest mi-app` genera un proyecto Vite o Next.js que ya compila. Para un proyecto existente, `npx create-veritas init` detecta el stack por el `package.json`, `pyproject.toml`, `requirements.txt` o `manage.py`, pide confirmación y escribe solo `.veritas/` y el bloque.
+
+## Ejecutarlo dos veces no puede romper nada
+
+El `AGENTS.md` de un proyecto real ya tiene contenido. La CLI no puede borrarlo, ni duplicar el bloque cada vez que alguien vuelve a ejecutar `init`. La solución fue delimitar el fragmento de Veritas con dos comentarios HTML y reemplazar solo lo que está entre ellos:
+
+```ts
+export function upsertBlock(current: string, block: string): string {
+  const start = current.indexOf(BLOCK_START); // <!-- veritas:start -->
+  const end = current.indexOf(BLOCK_END);     // <!-- veritas:end -->
+  if (start !== -1 && end > start) return current.slice(0, start) + block + current.slice(end + BLOCK_END.length);
+  if (current.trim() === "") return block + "\n";
+  return current.replace(/\s*$/, "\n\n") + block + "\n";
+}
+```
+
+Tres casos: el bloque ya existe y se reemplaza; el archivo está vacío y recibe solo el bloque; el archivo tiene contenido y el bloque va al final, separado por una línea en blanco. Es la misma función que después usa la extensión para editores, así que las dos nunca divergen.
+
+## Ninguna respuesta elegida en silencio
+
+La regla que más me gusta de la CLI es esta: **cada pregunta tiene una flag, y en un terminal sin nadie del otro lado, la respuesta que falta es un error**.
+
+Una CLI interactiva suele tener valores por defecto. Si no respondes, elige por ti. Eso es cómodo para una persona, y peligroso para un agente o un script de CI, que no está viendo la pregunta. El proyecto sale con un stack que nadie pidió, y nadie se da cuenta.
+
+En el código, eso cabe en pocas líneas:
+
+```ts
+const interactive = Boolean(process.stdin.isTTY && process.stdout.isTTY);
+
+export async function answer<T>(given: T | undefined, flag: string, interactive: boolean, ask: () => Promise<T>): Promise<T> {
+  if (given !== undefined) return given;
+  if (!interactive) throw new MissingAnswer(flag);
+  return ask();
+}
+```
+
+Cuando falta una respuesta, el mensaje dice exactamente qué hacer: "Faltou resposta e o terminal não é interativo. Passe `--stack <vite|nextjs>`." (falta una respuesta y el terminal no es interactivo; pase la flag). Las flags lo cubren todo:
+
+| Flag | Para |
+| --- | --- |
+| `--stack <vite\|nextjs>` | stack del proyecto nuevo |
+| `--skills a,b` | usar exactamente estas convenciones |
+| `--dir <carpeta>` | carpeta del proyecto |
+| `--yes`, `-y` | confirmar sin preguntar (`init`) |
+| `--no-install` | no ejecutar el install |
+| `--lang pt\|en` | idioma de los mensajes |
+
+## El crédito
+
+Dos ideas centrales de Veritas no son mías. Escribir las convenciones **dentro del proyecto**, y no decidir ninguna respuesta en silencio, vienen de [Prumo](https://prumo.stjosephworks.org), de St. Joseph Works, bajo licencia MIT. Veritas es mi versión de esas ideas, con los stacks con los que trabajo y las reglas escritas en portugués.
+
+## Lo que aprendí
+
+- Una convención que no está en el repositorio no existe para el agente. Poner el texto donde ya lo busca (`AGENTS.md`, `CLAUDE.md`) resolvió más que cualquier instrucción en el prompt.
+- La `description` de una skill es su parte más importante. Una descripción vaga hace que la skill no entre cuando debería.
+- Una herramienta que escribe en archivos de otra persona tiene que ser idempotente desde el primer día.
+- Un valor por defecto silencioso es deuda. En una CLI usada por agentes, prefiere un error que diga qué flag pasar.
+
+El código está en [GitHub](https://github.com/Caiorhcp/veritas), bajo licencia MIT, y la documentación, con una página por skill, está en [veritasdev.vercel.app](https://veritasdev.vercel.app). Si encuentras una regla equivocada o que falta, un PR es bienvenido: las skills son Markdown, no hace falta saber programar.

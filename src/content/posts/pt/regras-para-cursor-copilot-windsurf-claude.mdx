@@ -1,0 +1,93 @@
+Depois que o [Veritas](/pt/projetos/veritas) passou a escrever as convenções dentro do projeto, apareceu a pergunta óbvia: e quem não usa Claude Code? Um time pode ter uma pessoa no Cursor, outra no Copilot e outra no Windsurf. Cada assistente lê regras de um lugar diferente, num formato diferente.
+
+A resposta virou uma extensão para o VS Code e os editores baseados nele (Cursor, Windsurf, VSCodium, Trae). Ela pega as mesmas convenções e escreve no formato nativo de cada assistente. Este post é sobre o que aprendi lendo a documentação de nove ferramentas que, no fundo, querem a mesma coisa.
+
+## Nove assistentes, nove formatos
+
+Todos querem um texto que o modelo leia antes de trabalhar. O que muda é onde ele mora e como se diz "isso vale sempre" ou "isso vale só quando o assunto aparecer":
+
+| Assistente | Onde a extensão escreve | Como a regra entra |
+| --- | --- | --- |
+| Cursor | `.cursor/rules/veritas-*.mdc` | índice com `alwaysApply: true`; cada skill com `description` |
+| GitHub Copilot | bloco em `.github/copilot-instructions.md` + `.github/instructions/veritas-*.instructions.md` | arquivo do repositório sempre; skills por descrição |
+| Windsurf | `.windsurf/rules/veritas-*.md` | `trigger: always_on` no índice; `trigger: model_decision` nas skills |
+| Cline | `.clinerules/veritas-index.md` | sem frontmatter, sempre ativo |
+| Roo Code | `.roo/rules/veritas-index.md` | a pasta é lida inteira |
+| Continue | `.continue/rules/veritas-*.md` | `alwaysApply: true` no índice; `alwaysApply: false` com `description` nas skills |
+| Claude Code | bloco em `CLAUDE.md` | sempre |
+| Codex e outros | bloco em `AGENTS.md` | sempre |
+| Gemini CLI | bloco em `GEMINI.md` | sempre |
+
+Não inventei nenhuma dessas regras. Cada linha veio da documentação oficial: [Cursor](https://cursor.com/docs/rules), [GitHub Copilot](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions) e [no VS Code](https://code.visualstudio.com/docs/agent-customization/custom-instructions), [Windsurf](https://docs.devin.ai/cli/extensibility/rules.md), [Cline](https://docs.cline.bot/customization/cline-rules), [Roo Code](https://docs.roocode.com/features/custom-instructions), [Continue](https://docs.continue.dev/customize/deep-dives/rules), [Claude Code](https://docs.anthropic.com/en/docs/claude-code/memory), [agents.md](https://agents.md) e [Gemini CLI](https://geminicli.com/docs/cli/gemini-md/). Se você for fazer algo parecido, comece por elas: os formatos mudam, e a documentação é a única fonte que acompanha.
+
+## Apontar, não copiar
+
+A primeira versão que imaginei copiava cada skill inteira para dentro de cada formato. Seriam nove cópias do mesmo texto, e todas iriam para o contexto do modelo.
+
+O caminho melhor foi o contrário. A extensão escreve as skills uma vez, em `.veritas/`, e cada regra só **aponta** para o arquivo:
+
+```ts
+const skillBody = (s: string, ref = `\`${skillPath(s)}\``) =>
+  `Leia ${ref} antes de mexer no código desta área e siga o que ele diz.`;
+```
+
+No Cursor, a referência vira `@.veritas/nextjs/SKILL.md`, porque é assim que ele entende "leia este arquivo". Nos outros, é o caminho entre crases.
+
+Onde o formato permite carregar por descrição (Cursor, Copilot, Windsurf, Continue), cada skill vira uma regra separada, que o agente puxa quando a tarefa bate com ela. Onde não permite (Cline, Roo e os arquivos únicos como `CLAUDE.md`), vai um índice com as descrições, e o agente abre o arquivo certo sozinho.
+
+Um exemplo do Cursor, com o frontmatter que a [documentação](https://cursor.com/docs/rules) chama de "Apply Intelligently": `description` preenchida e sem `globs`:
+
+```ts
+case "cursor":
+  return [
+    { path: ".cursor/rules/veritas-index.mdc", content: fm(['description: "Convenções do Veritas: índice"', "alwaysApply: true"]) + index },
+    ...skills.map((s) => ({
+      path: `.cursor/rules/veritas-${s}.mdc`,
+      content: fm([`description: ${q(desc(s))}`, "alwaysApply: false"]) + skillBody(s, `@${skillPath(s)}`),
+    })),
+  ];
+```
+
+O `q()` é só `JSON.stringify`. Uma descrição com dois-pontos ou crase quebraria o YAML, e uma string entre aspas duplas aguenta as duas coisas.
+
+## Nunca sobrescrever o que é do usuário
+
+Esta foi a regra que mais pesou no código. Uma extensão que escreve em `.cursor/rules/` pode apagar uma regra que alguém escreveu à mão. Isso não pode acontecer nunca.
+
+A solução tem duas partes:
+
+- **Arquivos que a extensão gerencia** levam o prefixo `veritas-` e uma marca na primeira linha: `<!-- veritas:generated … -->`. Só esses são reescritos, ou apagados quando a skill sai da lista. Um arquivo com o mesmo nome e **sem a marca** é do usuário e fica intacto: a extensão pula e avisa.
+- **Arquivos compartilhados** (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `.github/copilot-instructions.md`) só recebem o trecho entre `<!-- veritas:start -->` e `<!-- veritas:end -->`. É a mesma função da CLI, importada do mesmo arquivo, que troca o bloco e nunca duplica.
+
+```ts
+if (!f.shared && current !== "" && !isGenerated(current)) {
+  result.skipped.push(f.path); // arquivo do usuário: não toca
+  continue;
+}
+writeFileSync(abs, f.shared ? upsertBlock(current, f.content) : f.content);
+```
+
+Essa lógica mora num módulo sem dependência do `vscode`, testado com `node:test`. A parte que fala com o editor é fina: comandos, painel e barra de status.
+
+## O resto da extensão
+
+Além de aplicar as convenções, a extensão tem um painel na barra lateral com as skills agrupadas, uma busca por nome e título, um comando para criar um projeto novo a partir do mesmo template da CLI, e comandos para montar, atualizar e abrir o grafo do [Graphify](https://github.com/Graphify-Labs/graphify). O grafo padrão é só do código, que roda local; incluir documentos é uma escolha explícita, porque passa por um modelo e custa tokens. Se o `graphify` não estiver instalado, a extensão explica e oferece o comando, mas não instala nada sozinha.
+
+Ela não tem telemetria. Tudo é escrito no disco, na pasta do projeto. O empacotamento é feito com esbuild, que junta a extensão e o código da CLI num único arquivo.
+
+## Distribuição: manual, por enquanto
+
+O caminho natural seria publicar no VS Code Marketplace e no Open VSX (que é de onde Cursor, Windsurf e VSCodium instalam). Isso ainda não aconteceu. Enquanto isso, o `.vsix` fica numa [página de download no site do Veritas](https://veritasdev.vercel.app/pt/extensao), com versão, tamanho e o SHA-256 para conferir o arquivo, e o passo a passo de instalação em cada editor.
+
+![Página da extensão no site do Veritas, com o botão para baixar o .vsix](/img/veritas-extensao.webp)
+
+Não é o ideal: sem marketplace, não há atualização automática. Mas é honesto e funciona hoje.
+
+## O que fica
+
+- Os formatos de regra são parecidos e os detalhes não. Leia a documentação de cada um em vez de supor.
+- Uma fonte (`.veritas/`) e várias referências pesam menos no contexto do que várias cópias.
+- Marque o que você gera. Sem a marca, não dá para distinguir o seu arquivo do arquivo do usuário.
+- Ferramenta que escreve em pasta alheia tem que ser chata com isso.
+
+O código da extensão está em [`extension/`](https://github.com/Caiorhcp/veritas/tree/main/extension), no repositório do Veritas, sob licença MIT.

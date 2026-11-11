@@ -1,0 +1,104 @@
+Na versão 2.1 do [Veritas](/pt/projetos/veritas), instalar o plugin passou a instalar mais dois junto: o **Ponytail**, de Dietrich Gebert, e o **Graphify**, da Graphify Labs. Nenhum dos dois é meu. Este post conta como funciona um plugin do Claude Code que depende de outros, o que fiz para empacotar uma skill de terceiros respeitando a licença, um bug bobo que impedia gente sem chave SSH de instalar, e a regra que escrevi para o agente não usar o grafo em tudo.
+
+## Por que esses dois
+
+Cada um resolve uma parte que o Veritas não resolve:
+
+- O [Ponytail](https://github.com/DietrichGebert/ponytail) (MIT, de [Dietrich Gebert](https://github.com/DietrichGebert)) define **quanto** mexer: a menor mudança que resolve, sem abstração que ninguém pediu, e menos tokens gastos.
+- O [Graphify](https://github.com/Graphify-Labs/graphify) (Apache-2.0, da [Graphify Labs](https://github.com/Graphify-Labs)) mostra **onde** mexer: monta um grafo do código e dos documentos e responde perguntas de estrutura.
+- As skills do Veritas dizem **como** escrever: stack, camadas e proibições.
+
+Eu já recomendava os dois no README. O problema é que recomendação vira um passo a mais que quase ninguém faz.
+
+## Dependências no manifesto
+
+O Claude Code aceita um campo `dependencies` no `plugin.json`. O do Veritas ficou assim:
+
+```json
+{
+  "name": "veritas",
+  "version": "2.1.0",
+  "license": "MIT",
+  "dependencies": ["ponytail", "graphify"]
+}
+```
+
+Os nomes se referem a plugins do mesmo marketplace. Então o `marketplace.json` do repositório lista os três, cada um com a sua origem:
+
+```json
+"plugins": [
+  { "name": "veritas", "source": "./plugin" },
+  { "name": "ponytail", "source": { "source": "url", "url": "https://github.com/DietrichGebert/ponytail.git" }, "license": "MIT" },
+  { "name": "graphify", "source": "./plugins/graphify", "license": "Apache-2.0" }
+]
+```
+
+Com isso, os dois comandos de sempre bastam:
+
+```
+/plugin marketplace add Caiorhcp/veritas
+/plugin install veritas@veritas
+```
+
+Na instalação, o Claude Code instala o Veritas e avisa "+ 2 dependencies": os outros dois vêm junto.
+
+## O Ponytail vem do repositório do autor
+
+O Ponytail publica um plugin próprio. Então o marketplace do Veritas não guarda cópia nenhuma: aponta para o repositório do Dietrich, e a instalação busca de lá. Todo o crédito, e cada atualização, continuam com ele.
+
+## O bug do SSH
+
+Na primeira versão, a entrada do Ponytail usava o atalho de GitHub do marketplace:
+
+```json
+"source": { "source": "github", "repo": "DietrichGebert/ponytail" }
+```
+
+Para quem tem chave SSH configurada no GitHub, funcionava. Para quem não tem, a instalação falhava: por esse atalho, o repositório estava sendo clonado por SSH, e sem chave o `git clone` não passa da autenticação, mesmo com o repositório sendo público.
+
+A correção foi trocar para a origem por URL, com `https` explícito, como está no trecho acima. Repositório público por `https` não pede credencial nenhuma. Lição: teste a instalação numa máquina que não é a sua, ou pelo menos num usuário sem as suas chaves.
+
+## O Graphify vem empacotado, sem alterações
+
+Com o Graphify a situação era outra. Ele não publica um plugin para o Claude Code, só a skill. Para ele entrar como dependência, o Veritas precisava empacotar essa skill.
+
+Empacotar código de outra pessoa pede cuidado com a licença. A Apache-2.0 permite redistribuir, com condições: manter o `LICENSE`, manter o `NOTICE` e deixar claro o que foi modificado. A forma mais simples de cumprir isso foi não modificar nada. Um script copia a skill oficial de uma versão marcada do repositório, junto com os arquivos de licença:
+
+```js
+// Uso: node tools/sync-graphify.mjs v0.9.106
+const raw = (path) => `https://raw.githubusercontent.com/Graphify-Labs/graphify/${tag}/${path}`;
+const files = [
+  ["graphify/skill.md", "skills/graphify/SKILL.md"],
+  ...REFS.map((r) => [`graphify/skills/claude/references/${r}.md`, `skills/graphify/references/${r}.md`]),
+  ["LICENSE", "LICENSE"],
+  ["NOTICE", "NOTICE"],
+];
+```
+
+Depois de baixar, o script grava a versão no `plugin.json` do pacote. O autor no manifesto é a Graphify Labs, e um README na pasta explica que aquilo é a skill oficial, empacotada sem alterações, e onde reportar problemas do Graphify em si. Atualizar é rodar o script com a tag nova.
+
+## Usar o grafo quando compensa
+
+Com o Graphify instalado em todo projeto, surgiu o risco contrário: o agente montar um grafo para trocar a cor de um botão. Montar o grafo custa tempo, e incluir documentos passa por um modelo e custa tokens.
+
+Para isso escrevi uma skill própria, a `mapa-do-codigo`. O núcleo dela é uma tabela:
+
+| Situação | O que fazer |
+| --- | --- |
+| Existe `graphify-out/graph.json` e a pergunta é de estrutura (arquitetura, fluxo, impacto) | consultar o grafo primeiro e só depois abrir os arquivos que ele apontar |
+| Primeiro contato com um projeto grande ou desconhecido | montar o grafo só do código, que não gasta tokens; perguntar antes de incluir documentos |
+| Tarefa pontual: "onde está X", corrigir um botão, renomear | busca normal, com grep e leitura do arquivo |
+| O grafo existe, mas o código mudou muito | atualizar o grafo antes de confiar nele |
+
+E algumas regras curtas. O grafo aponta, o código confirma: antes de alterar um arquivo, leia o arquivo. Se o grafo contradiz o código aberto, vale o código. O grafo não vai para o Git por padrão. E o gancho de commit que mantém o grafo atualizado é oferecido, nunca instalado sem perguntar.
+
+A frase que resume a skill está nela mesma: o grafo é uma ferramenta, não um pedágio.
+
+## O que fica
+
+- `dependencies` no `plugin.json` transforma recomendação em instalação, sem esforço extra para quem usa.
+- Prefira apontar para o plugin do autor. Empacote só quando não houver outro jeito, e aí sem alterar nada e com `LICENSE` e `NOTICE` junto.
+- Teste a instalação sem as suas credenciais.
+- Ferramenta poderosa precisa de uma regra de quando **não** usar.
+
+Os créditos estão no [README do Veritas](https://github.com/Caiorhcp/veritas#créditos) e no [site](https://veritasdev.vercel.app). O Ponytail é de Dietrich Gebert; o Graphify, da Graphify Labs. Se algo der errado com um deles, a issue vai para o repositório de cada um.

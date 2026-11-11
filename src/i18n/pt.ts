@@ -105,7 +105,7 @@ export const pt = {
     aboutTitle: "Quem sou",
     about: [
       "Sou desenvolvedor full stack na Ponto Env, onde faço apps, sites, APIs e CRMs e ajudo a desenhar a arquitetura dos projetos. Estou no 8º semestre de Sistemas de Informação na Uninassau, em Juazeiro do Norte.",
-      "Gosto de IA aplicada a problemas concretos. O S.A.P.O., meu projeto mais recente, analisa processos jurídicos sem tirar o documento do computador de quem usa.",
+      "Gosto de IA aplicada a problemas concretos. O S.A.P.O. analisa processos jurídicos sem tirar o documento do computador de quem usa, e o Veritas, open source, ensina as convenções de um time a agentes de IA.",
     ],
     journey: "Minha trajetória",
     cv: "Currículo em PDF",
@@ -177,7 +177,7 @@ export const pt = {
     paragraphs: [
       "Sou Caio Vinicius Gonçalves de Sousa, de Missão Velha, no Ceará. Meu primeiro contato com programação foi na escola, montando um jogo no GameMaker.",
       "Segui outro caminho por um tempo e cheguei a cursar Economia. Na pandemia voltei ao GameMaker por diversão e percebi que era isso que eu queria fazer. Em 2023 comecei Sistemas de Informação.",
-      "Hoje sou desenvolvedor full stack na Ponto Env: faço apps, sites, APIs e CRMs, e ajudo a desenhar a arquitetura dos projetos e a coordenar a equipe. Nas horas vagas, construo projetos como o S.A.P.O. e escrevo aqui no blog sobre o que aprendo.",
+      "Hoje sou desenvolvedor full stack na Ponto Env: faço apps, sites, APIs e CRMs, e ajudo a desenhar a arquitetura dos projetos e a coordenar a equipe. Nas horas vagas, construo projetos como o S.A.P.O. e o Veritas e escrevo aqui no blog sobre o que aprendo.",
     ],
     cv: "Baixar currículo (PDF)",
     portraitAlt: "Retrato de Caio Gonçalves",

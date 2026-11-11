@@ -1,0 +1,133 @@
+No [primeiro post sobre o Datajud](/pt/blog/api-datajud-cnj) eu contei como integrei a API pública do CNJ ao [S.A.P.O.](/pt/projetos/sapo). Desde então, usando o sistema de verdade, apareceram dois problemas. O primeiro era antes da consulta: o número do processo chegava errado e a pessoa não sabia por quê. O segundo era durante: a API demorava tanto que a função caía antes de responder. Este post é sobre as duas correções.
+
+## O número CNJ que a pessoa cola
+
+O número único de processo tem 20 dígitos, no formato `NNNNNNN-DD.AAAA.J.TR.OOOO`. Na prática, ele chega de todo jeito: com pontos, sem pontos, com espaço, copiado de um PDF, digitado no celular. A versão antiga só dizia "número inválido". Isso não ajuda ninguém.
+
+### Máscara enquanto digita
+
+O campo agora formata enquanto a pessoa digita. Só dígitos entram, e os separadores aparecem sozinhos nas posições certas:
+
+```ts
+export function maskCnj(input: string): string {
+  if (SEGMENTED.test(input)) return parseCnj(input)?.formatted ?? input.trim(); // colou já formatado
+  const d = input.replace(/\D/g, "").slice(0, 20);
+  const cuts: Record<number, string> = { 7: "-", 9: ".", 13: ".", 14: ".", 16: "." };
+  let out = "";
+  for (let i = 0; i < d.length; i++) out += (cuts[i] ?? "") + d[i];
+  return out;
+}
+```
+
+O campo usa `inputMode="numeric"`, então no celular abre o teclado de números. Embaixo dele, uma linha muda conforme a pessoa digita: o que falta, o que está errado ou, quando o número é válido, o tribunal e o ano em que o processo foi ajuizado.
+
+### O dígito verificador
+
+O `DD` é um dígito verificador calculado pela ISO 7064 (módulo 97). Ele é o que permite dizer, sem consultar nada, que o número foi digitado errado:
+
+```ts
+// ISO 7064 MOD 97-10: DD = 98 - (N AAAA J TR OOOO 00 mod 97)
+const dvOf = (d: string) => 98 - Number(BigInt(d.slice(0, 7) + d.slice(9) + "00") % 97n);
+```
+
+O `BigInt` está ali porque um número de 20 dígitos não cabe num `number` do JavaScript sem perder precisão.
+
+### Os zeros que somem
+
+O erro mais comum que vi foi o número com zeros a menos. O sequencial `0001234` vira `1234` quando passa por uma planilha que trata a coluna como número, ou quando alguém digita de memória.
+
+Com separadores, é fácil: se a pessoa escreveu `1234-56.2023.8.06.0001`, o primeiro bloco tem que ter 7 dígitos, então os zeros que faltam vão à esquerda dele.
+
+Só com dígitos é mais delicado. `12345620238060001` tem 17 dígitos, e não dá para saber, só olhando, onde os zeros sumiram. Completar à esquerda é um palpite. O que torna o palpite seguro é o dígito verificador:
+
+```ts
+// Colado só com dígitos e sem os zeros à esquerda: completa e confere pelo dígito verificador
+if (/^[\d\s]+$/.test(input) && d.length >= 14 && d.length < 20) {
+  const padded = d.padStart(20, "0");
+  if (dvOf(padded) === Number(padded.slice(7, 9))) d = padded;
+}
+```
+
+Três condições: a entrada tem só dígitos e espaços (com pontuação, a posição dos blocos já resolve), tem pelo menos 14 dígitos, e o número completado **passa** no dígito verificador. Se não passar, o sistema não corrige nada e diz quantos dígitos faltam.
+
+### Erros que explicam
+
+Cada falha tem uma mensagem própria, em linguagem simples:
+
+| Situação | Mensagem |
+| --- | --- |
+| Faltam dígitos | "Faltam 3 dígitos: o número CNJ tem 20 (NNNNNNN-DD.AAAA.J.TR.OOOO)." |
+| Dígitos a mais | "Há 2 dígitos a mais: o número CNJ tem 20. Confira se não colou outro número junto." |
+| Segmento 0 | "O segmento da Justiça (o J, depois do ano) não pode ser 0." |
+| DV não confere | "O dígito verificador (56) não confere com o resto do número: algum dígito foi digitado ou copiado errado." |
+
+A mesma função valida no navegador e na rota do servidor, então a mensagem é igual nos dois lugares.
+
+## Uma API pública lenta
+
+O Datajud é lento. Nos meus testes, cada consulta levou de 30 a 50 segundos, e às vezes mais de um minuto. Em alguns momentos ele também respondeu `429`, o limite de requisições.
+
+### O tempo da função
+
+Na Vercel, cada rota tem um tempo máximo de execução. A versão antiga dava 60 segundos para a função e 55 para o Datajud, e isso não bastava nos dias ruins. Agora a rota declara:
+
+```ts
+export const maxDuration = 120;
+```
+
+E a chamada ao Datajud desiste em 110 segundos, com `AbortSignal.timeout`. A diferença de 10 segundos é margem para a rota responder com uma mensagem clara, em vez de ser derrubada pela plataforma.
+
+### Quando quem responde é a plataforma
+
+Mesmo assim, a função pode estourar o tempo. Quando isso acontece, quem responde não é o meu código, é a Vercel, com um `504` e uma página HTML. O front-end fazia `res.json()` e quebrava num erro de parse que não dizia nada.
+
+A correção é uma linha: tentar ler o JSON e, se falhar, seguir com um objeto vazio, deixando o status decidir a mensagem.
+
+```ts
+// Se a função estoura o tempo, a Vercel responde com uma página, não com JSON
+const data = await res.json().catch(() => ({}));
+```
+
+### Uma segunda tentativa, e um contador
+
+Nos testes, uma busca repetida logo depois de um `504` costumava voltar mais rápido. Então o front-end tenta uma segunda vez sozinho, e só uma:
+
+```ts
+let r = await request(numero);
+if (r.status === 504) {
+  onRetry();
+  r = await request(numero);
+}
+```
+
+Esperar um minuto olhando para um ícone girando parece travamento. Por isso a tela mostra os segundos passados ("Consultando o Datajud · 37 s"), avisa que a API costuma levar de 30 segundos a 1 minuto e, na segunda tentativa, troca o texto para "O Datajud demorou; tentando de novo".
+
+Também pedi menos dados. A consulta usa `_source` com só os campos que a tela mostra, em vez do documento inteiro, e `track_total_hits: false`, porque a contagem total não interessa.
+
+### Um cache simples, e por que não o `"use cache"`
+
+O andamento de um processo muda pouco ao longo do dia. Se alguém consulta o mesmo número duas vezes, não faz sentido esperar mais um minuto. A rota guarda as respostas boas por uma hora:
+
+```ts
+const CACHE_MS = 60 * 60 * 1000;
+const cache = new Map<string, { at: number; instances: Instance[] }>();
+```
+
+Erros não entram no cache: um `429` agora não deve impedir uma consulta daqui a cinco minutos.
+
+A primeira ideia foi a diretiva `"use cache"`, do Next.js. Não serviu aqui. O código do Datajud lança uma classe própria, `DatajudError`, com o status e a mensagem amigável, e a rota usa `instanceof` para transformar isso em resposta. Lançado de dentro de uma função com `"use cache"`, o erro chegava sem a classe, e a mensagem amigável virava um erro genérico. Um `Map` em memória resolveu.
+
+O limite dessa escolha está escrito num comentário: o cache vive em cada instância do servidor e some quando ela recicla. Se o uso crescer, a troca é por um Redis ou outro armazenamento compartilhado.
+
+## A atribuição
+
+Quem usa a API pública do Datajud precisa citar a fonte, conforme a Portaria CNJ 374/2026. No S.A.P.O., a atribuição fica no rodapé da página inicial: "Fonte: API Pública do Datajud, CNJ".
+
+## O que fica
+
+- Validar não é só recusar. Uma mensagem que diz o que está errado economiza mais tempo que qualquer otimização.
+- Corrigir a entrada do usuário só quando existe uma prova de que a correção está certa. Aqui, a prova é o dígito verificador.
+- Com uma API lenta, o tempo máximo da função, a resposta da plataforma e a espera na tela são três problemas diferentes.
+- Cache de framework é ótimo até mudar a forma dos seus erros. Teste o caminho de erro, não só o de sucesso.
+
+O código está no [repositório do S.A.P.O.](https://github.com/Caiorhcp/sapo-juridico), em `web/src/lib/cnj.ts` e `web/src/app/api/processo/route.ts`. Para testar, a página inicial está em [sapo-juridico.vercel.app](https://sapo-juridico.vercel.app) e o analisador, em [/analisar](https://sapo-juridico.vercel.app/analisar).

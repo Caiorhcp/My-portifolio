@@ -1,0 +1,133 @@
+In my [first post about Datajud](/en/blog/api-datajud-cnj) I explained how I integrated the public API of Brazil's National Council of Justice (CNJ) into [S.A.P.O.](/en/projetos/sapo). Since then, using the system for real, two problems came up. The first happened before the query: the case number arrived wrong and the person didn't know why. The second happened during it: the API took so long that the function died before answering. This post is about both fixes.
+
+## The case number people paste
+
+Brazil's unified case number (the "número CNJ") has 20 digits, in the format `NNNNNNN-DD.AAAA.J.TR.OOOO`. In practice it arrives in every shape: with dots, without dots, with spaces, copied from a PDF, typed on a phone. The old version just said "invalid number". That helps nobody.
+
+### A mask while typing
+
+The field now formats as the person types. Only digits get in, and the separators appear on their own in the right places:
+
+```ts
+export function maskCnj(input: string): string {
+  if (SEGMENTED.test(input)) return parseCnj(input)?.formatted ?? input.trim(); // colou já formatado
+  const d = input.replace(/\D/g, "").slice(0, 20);
+  const cuts: Record<number, string> = { 7: "-", 9: ".", 13: ".", 14: ".", 16: "." };
+  let out = "";
+  for (let i = 0; i < d.length; i++) out += (cuts[i] ?? "") + d[i];
+  return out;
+}
+```
+
+The field uses `inputMode="numeric"`, so phones open the number keypad. Below it, a line changes as the person types: what's missing, what's wrong or, once the number is valid, the court and the year the case was filed.
+
+### The check digit
+
+`DD` is a check digit computed with ISO 7064 (mod 97). It's what lets you say, without querying anything, that the number was mistyped:
+
+```ts
+// ISO 7064 MOD 97-10: DD = 98 - (N AAAA J TR OOOO 00 mod 97)
+const dvOf = (d: string) => 98 - Number(BigInt(d.slice(0, 7) + d.slice(9) + "00") % 97n);
+```
+
+The `BigInt` is there because a 20-digit number doesn't fit in a JavaScript `number` without losing precision.
+
+### The vanishing zeros
+
+The most common mistake I saw was a number missing zeros. The sequential part `0001234` becomes `1234` when it goes through a spreadsheet that treats the column as a number, or when someone types it from memory.
+
+With separators, it's easy: if the person wrote `1234-56.2023.8.06.0001`, the first block must have 7 digits, so the missing zeros go to its left.
+
+With digits only, it's trickier. `12345620238060001` has 17 digits, and just by looking you can't tell where the zeros went missing. Padding on the left is a guess. What makes the guess safe is the check digit:
+
+```ts
+// Colado só com dígitos e sem os zeros à esquerda: completa e confere pelo dígito verificador
+if (/^[\d\s]+$/.test(input) && d.length >= 14 && d.length < 20) {
+  const padded = d.padStart(20, "0");
+  if (dvOf(padded) === Number(padded.slice(7, 9))) d = padded;
+}
+```
+
+Three conditions: the input has only digits and spaces (with punctuation, the position of the blocks already settles it), it has at least 14 digits, and the padded number **passes** the check digit. If it doesn't pass, the system fixes nothing and says how many digits are missing.
+
+### Errors that explain
+
+Each failure has its own plain-language message (the app shows them in Portuguese):
+
+| Situation | Message |
+| --- | --- |
+| Missing digits | "3 digits missing: the CNJ number has 20 (NNNNNNN-DD.AAAA.J.TR.OOOO)." |
+| Extra digits | "2 digits too many: the CNJ number has 20. Check that you didn't paste another number along with it." |
+| Segment 0 | "The branch of the judiciary (the J, after the year) can't be 0." |
+| Check digit mismatch | "The check digit (56) doesn't match the rest of the number: some digit was typed or copied wrong." |
+
+The same function validates in the browser and in the server route, so the message is identical in both places.
+
+## A slow public API
+
+Datajud is slow. In my tests, each query took 30 to 50 seconds, and sometimes more than a minute. At times it also answered `429`, the rate limit.
+
+### The function's time budget
+
+On Vercel, each route has a maximum execution time. The old version gave the function 60 seconds and Datajud 55, and that wasn't enough on bad days. Now the route declares:
+
+```ts
+export const maxDuration = 120;
+```
+
+And the Datajud call gives up after 110 seconds, with `AbortSignal.timeout`. The 10-second gap is headroom for the route to answer with a clear message instead of being killed by the platform.
+
+### When the platform answers
+
+Even so, the function can run out of time. When that happens, the response doesn't come from my code but from Vercel, with a `504` and an HTML page. The front end called `res.json()` and broke with a parse error that said nothing.
+
+The fix is one line: try to read the JSON and, if that fails, carry on with an empty object, letting the status decide the message.
+
+```ts
+// Se a função estoura o tempo, a Vercel responde com uma página, não com JSON
+const data = await res.json().catch(() => ({}));
+```
+
+### A second attempt, and a counter
+
+In testing, a query repeated right after a `504` usually came back faster. So the front end retries on its own, once and only once:
+
+```ts
+let r = await request(numero);
+if (r.status === 504) {
+  onRetry();
+  r = await request(numero);
+}
+```
+
+Waiting a minute while staring at a spinner feels like a freeze. That's why the screen shows the elapsed seconds ("Consultando o Datajud · 37 s", querying Datajud), warns that the API usually takes 30 seconds to 1 minute and, on the second attempt, changes the text to "O Datajud demorou; tentando de novo" (Datajud took too long; trying again).
+
+I also asked for less data. The query uses `_source` with only the fields the screen shows, instead of the whole document, and `track_total_hits: false`, because the total count doesn't matter.
+
+### A simple cache, and why not `"use cache"`
+
+A case's status changes little over a day. If someone looks up the same number twice, there's no point waiting another minute. The route keeps good answers for one hour:
+
+```ts
+const CACHE_MS = 60 * 60 * 1000;
+const cache = new Map<string, { at: number; instances: Instance[] }>();
+```
+
+Errors don't go into the cache: a `429` now shouldn't block a query five minutes from now.
+
+The first idea was Next.js's `"use cache"` directive. It didn't work here. The Datajud code throws its own class, `DatajudError`, carrying the status and the friendly message, and the route uses `instanceof` to turn that into a response. Thrown from inside a function with `"use cache"`, the error arrived without its class, and the friendly message turned into a generic error. An in-memory `Map` solved it.
+
+The limit of that choice is written in a comment: the cache lives in each server instance and disappears when it gets recycled. If usage grows, the swap is to Redis or some other shared store.
+
+## Attribution
+
+Anyone using Datajud's public API must cite the source, under CNJ Ordinance (Portaria) 374/2026. In S.A.P.O., the attribution sits in the home page footer: "Fonte: API Pública do Datajud, CNJ" (Source: Datajud Public API, CNJ).
+
+## Takeaways
+
+- Validating isn't just rejecting. A message that says what's wrong saves more time than any optimization.
+- Correct user input only when there's proof the correction is right. Here, the proof is the check digit.
+- With a slow API, the function's time limit, the platform's response and the wait on screen are three different problems.
+- A framework cache is great until it changes the shape of your errors. Test the error path, not just the happy one.
+
+The code is in the [S.A.P.O. repository](https://github.com/Caiorhcp/sapo-juridico), in `web/src/lib/cnj.ts` and `web/src/app/api/processo/route.ts`. To try it, the home page is at [sapo-juridico.vercel.app](https://sapo-juridico.vercel.app/en) and the analyzer at [/analisar](https://sapo-juridico.vercel.app/analisar).

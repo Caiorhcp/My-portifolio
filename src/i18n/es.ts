@@ -106,7 +106,7 @@ export const es: Dictionary = {
     aboutTitle: "Quién soy",
     about: [
       "Soy desarrollador full stack en Ponto Env, donde creo apps, sitios web, APIs y CRMs y ayudo a diseñar la arquitectura de los proyectos. Estoy en el 8.º semestre de Sistemas de Información en Uninassau, en Juazeiro do Norte, Brasil.",
-      "Me gusta la IA aplicada a problemas concretos. S.A.P.O., mi proyecto más reciente, analiza expedientes judiciales sin que el documento salga de la computadora de quien lo usa.",
+      "Me gusta la IA aplicada a problemas concretos. S.A.P.O. analiza expedientes judiciales sin que el documento salga de la computadora de quien lo usa, y Veritas, open source, enseña las convenciones de un equipo a agentes de IA.",
     ],
     journey: "Mi trayectoria",
     cv: "Currículum en PDF",
@@ -178,7 +178,7 @@ export const es: Dictionary = {
     paragraphs: [
       "Soy Caio Vinicius Gonçalves de Sousa, de Missão Velha, en el estado de Ceará, Brasil. Mi primer contacto con la programación fue en la escuela, creando un juego en GameMaker.",
       "Seguí otro camino por un tiempo y llegué a estudiar Economía. En la pandemia volví a GameMaker por diversión y me di cuenta de que era lo que quería hacer. En 2023 empecé Sistemas de Información.",
-      "Hoy soy desarrollador full stack en Ponto Env: creo apps, sitios web, APIs y CRMs, y ayudo a diseñar la arquitectura de los proyectos y a coordinar el equipo. En mi tiempo libre construyo proyectos como S.A.P.O. y escribo aquí en el blog sobre lo que aprendo.",
+      "Hoy soy desarrollador full stack en Ponto Env: creo apps, sitios web, APIs y CRMs, y ayudo a diseñar la arquitectura de los proyectos y a coordinar el equipo. En mi tiempo libre construyo proyectos como S.A.P.O. y Veritas, y escribo aquí en el blog sobre lo que aprendo.",
     ],
     cv: "Descargar currículum (PDF, en portugués)",
     portraitAlt: "Retrato de Caio Gonçalves",

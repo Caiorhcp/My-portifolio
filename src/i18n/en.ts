@@ -106,7 +106,7 @@ export const en: Dictionary = {
     aboutTitle: "About me",
     about: [
       "I'm a full stack developer at Ponto Env, where I build apps, websites, APIs and CRMs and help design the architecture of our projects. I'm in the 8th semester of Information Systems at Uninassau, in Juazeiro do Norte, Brazil.",
-      "I like AI applied to concrete problems. S.A.P.O., my latest project, analyzes legal case files without the document ever leaving the user's computer.",
+      "I like AI applied to concrete problems. S.A.P.O. analyzes legal case files without the document ever leaving the user's computer, and Veritas, which is open source, teaches a team's conventions to AI agents.",
     ],
     journey: "My background",
     cv: "Résumé (PDF)",
@@ -178,7 +178,7 @@ export const en: Dictionary = {
     paragraphs: [
       "I'm Caio Vinicius Gonçalves de Sousa, from Missão Velha, in the state of Ceará, Brazil. My first contact with programming was at school, building a game in GameMaker.",
       "I followed a different path for a while and even studied Economics. During the pandemic I went back to GameMaker for fun and realized this was what I wanted to do. In 2023 I started a degree in Information Systems.",
-      "Today I'm a full stack developer at Ponto Env: I build apps, websites, APIs and CRMs, and help design project architecture and coordinate the team. In my spare time I build projects like S.A.P.O. and write here on the blog about what I learn.",
+      "Today I'm a full stack developer at Ponto Env: I build apps, websites, APIs and CRMs, and help design project architecture and coordinate the team. In my spare time I build projects like S.A.P.O. and Veritas and write here on the blog about what I learn.",
     ],
     cv: "Download résumé (PDF, in Portuguese)",
     portraitAlt: "Portrait of Caio Gonçalves",
