@@ -18,6 +18,8 @@ export interface Project {
   /** Vazio quando o código é de cliente e não é público. */
   repo: string;
   site?: string;
+  /** Site com versão por idioma: /en e /es depois do endereço (o português fica na raiz). */
+  siteLocalized?: boolean;
   /** Telas reais em /public/img. */
   images: { src: string; width: number; height: number }[];
   tone: "brand" | "ochre" | "stone";
@@ -196,6 +198,7 @@ export const PROJECTS: Project[] = [
     stack: ["Next.js", "TypeScript", "Python", "scikit-learn", "Tailwind CSS", "Vercel"],
     repo: "https://github.com/Caiorhcp/sapo-juridico",
     site: "https://sapo-juridico.vercel.app",
+    siteLocalized: true,
     images: [
       { src: "/img/sapo-inicio.webp", width: 1100, height: 1375 },
       { src: "/img/sapo-ficha.webp", width: 1100, height: 1375 },
@@ -265,3 +268,7 @@ export const PROJECTS: Project[] = [
 ];
 
 export const getProject = (slug: string) => PROJECTS.find((p) => p.slug === slug);
+
+/** Endereço do site do projeto no idioma da página (português na raiz). */
+export const siteFor = (p: Project, lang: Locale) =>
+  p.site && p.siteLocalized && lang !== "pt" ? `${p.site}/${lang}` : p.site;

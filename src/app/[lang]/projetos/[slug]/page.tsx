@@ -8,7 +8,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Reveal, RevealItem } from "@/components/Reveal";
 import { LOCALES } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
-import { getProject, PROJECTS } from "@/lib/projects";
+import { getProject, PROJECTS, siteFor } from "@/lib/projects";
 import { pageMeta } from "@/lib/seo";
 import { absolute } from "@/lib/site";
 import { resolveLocale } from "../../params";
@@ -78,7 +78,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/projeto
               </div>
               <div className="flex flex-col gap-2 pt-2">
                 {p.site && (
-                  <a href={p.site} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-page bg-brand px-4 py-2.5 font-medium text-on-brand hover:bg-brand-hover">
+                  <a href={siteFor(p, lang)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-page bg-brand px-4 py-2.5 font-medium text-on-brand hover:bg-brand-hover">
                     {d.projects.open} <ArrowUpRight size={16} aria-hidden />
                   </a>
                 )}
@@ -112,7 +112,7 @@ export default async function ProjectPage({ params }: PageProps<"/[lang]/projeto
           name: p.name,
           description: t.description,
           inLanguage: lang,
-          ...(p.site ? { sameAs: p.site } : {}),
+          ...(p.site ? { sameAs: siteFor(p, lang) } : {}),
           keywords: (t.stack ?? p.stack).join(", "),
           url: absolute(`/${lang}/projetos/${p.slug}`),
           author: { "@id": absolute("/#caio") },
