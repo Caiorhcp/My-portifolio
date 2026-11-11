@@ -84,7 +84,7 @@ export const en: Dictionary = {
     services: [
       {
         title: "Websites and landing pages",
-        text: "Fast websites that look great on mobile and are ready to rank on Google: company pages, product or campaign landing pages, blogs.",
+        text: "Fast websites that look great on mobile, with full SEO to reach the top of Google: the Laboratório Vicente Lemos website reached #1 for several searches. Company pages, product or campaign landing pages, blogs.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Get a website quote",
       },
@@ -125,7 +125,7 @@ export const en: Dictionary = {
       },
       {
         q: "Will the website show up on Google?",
-        a: "Every website ships with solid SEO basics: fast pages, a title and description for each page, a sitemap, structured data and a share image for WhatsApp and social media.",
+        a: "Every website ships with full SEO: fast pages, a title and description for each page, a sitemap, structured data, local SEO and a share image for WhatsApp and social media. The Laboratório Vicente Lemos website, for example, reached #1 on Google for several searches. Nobody controls Google's algorithm, but I do all the technical work to get there.",
       },
       {
         q: "Do you work with clients outside Brazil?",

@@ -84,7 +84,7 @@ export const es: Dictionary = {
     services: [
       {
         title: "Sitios web y landing pages",
-        text: "Sitios rápidos, bonitos en el móvil y preparados para aparecer en Google: página de la empresa, landing page de producto o campaña, blog.",
+        text: "Sitios rápidos, bonitos en el móvil y con SEO completo para llegar a lo más alto de Google: el del Laboratório Vicente Lemos alcanzó el 1.er lugar en varias búsquedas. Página de la empresa, landing page de producto o campaña, blog.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Pedir presupuesto de sitio web",
       },
@@ -125,7 +125,7 @@ export const es: Dictionary = {
       },
       {
         q: "¿El sitio va a aparecer en Google?",
-        a: "Todo sitio sale con lo básico de SEO bien hecho: páginas rápidas, título y descripción por página, sitemap, datos estructurados e imagen para compartir en WhatsApp y redes sociales.",
+        a: "Todo sitio sale con SEO completo: páginas rápidas, título y descripción por página, sitemap, datos estructurados, SEO local e imagen para compartir en WhatsApp y redes sociales. El sitio del Laboratório Vicente Lemos, por ejemplo, llegó al 1.er lugar de Google en varias búsquedas. Nadie controla el algoritmo de Google, pero hago todo el trabajo técnico para llegar ahí.",
       },
       {
         q: "¿Trabajas con clientes fuera de Brasil?",

@@ -83,7 +83,7 @@ export const pt = {
     services: [
       {
         title: "Sites e landing pages",
-        text: "Sites rápidos, bonitos no celular e preparados para aparecer no Google: página da empresa, landing page de produto ou campanha, blog.",
+        text: "Sites rápidos, bonitos no celular e com SEO completo para chegar ao topo do Google: o do Laboratório Vicente Lemos alcançou o 1º lugar em várias pesquisas. Página da empresa, landing page de produto ou campanha, blog.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Pedir orçamento de site",
       },
@@ -124,7 +124,7 @@ export const pt = {
       },
       {
         q: "O site vai aparecer no Google?",
-        a: "Todo site sai com o básico de SEO bem feito: páginas rápidas, títulos e descrições por página, sitemap, dados estruturados e imagem de compartilhamento para WhatsApp e redes sociais.",
+        a: "Todo site sai com SEO completo: páginas rápidas, títulos e descrições por página, sitemap, dados estruturados, SEO local e imagem de compartilhamento para WhatsApp e redes sociais. O site do Laboratório Vicente Lemos, por exemplo, chegou ao 1º lugar do Google em várias pesquisas. Ninguém controla o algoritmo do Google, mas o trabalho técnico para chegar lá eu faço inteiro.",
       },
       {
         q: "Atende empresas de fora do Ceará?",

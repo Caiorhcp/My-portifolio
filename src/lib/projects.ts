@@ -137,6 +137,7 @@ export const PROJECTS: Project[] = [
           "Site do Laboratório Vicente Lemos, rede de análises clínicas com 27 unidades no Cariri cearense e no sertão de Pernambuco. Reúne campanhas, catálogo de exames com busca, unidades com horários e filtros, o plano Mais Saúde e o caminho para os laudos online, com SEO local para cada cidade atendida.",
         role: "Desenvolvimento do site",
         highlights: [
+          "SEO completo: o site chegou ao 1º lugar do Google em várias pesquisas.",
           "Catálogo com busca por nome, sigla ou código entre 1.525 exames, inclusive vários de uma vez.",
           "Página de unidades com filtros por estado, cidade e status: 27 unidades em 16 cidades.",
           "SEO local com metadados de geolocalização e páginas pensadas para cada cidade do Cariri e de Pernambuco.",
@@ -158,6 +159,7 @@ export const PROJECTS: Project[] = [
           "Website for Laboratório Vicente Lemos, a clinical lab network with 27 locations in the Cariri region of Ceará and the backlands of Pernambuco, Brazil. It brings together campaigns, a searchable test catalog, locations with opening hours and filters, the Mais Saúde plan and access to online results, with local SEO for every city served.",
         role: "Website development",
         highlights: [
+          "Full SEO: the website reached #1 on Google for several searches.",
           "Catalog with search by name, abbreviation or code across 1,525 lab tests, including several at once.",
           "Locations page with filters by state, city and status: 27 locations in 16 cities.",
           "Local SEO with geolocation metadata and pages designed for each city in Cariri and Pernambuco.",
@@ -180,6 +182,7 @@ export const PROJECTS: Project[] = [
           "Sitio web del Laboratório Vicente Lemos, red de análisis clínicos con 27 sedes en la región del Cariri, en Ceará, y en el interior de Pernambuco, Brasil. Reúne campañas, un catálogo de exámenes con buscador, sedes con horarios y filtros, el plan Mais Saúde y el acceso a los resultados en línea, con SEO local para cada ciudad atendida.",
         role: "Desarrollo del sitio web",
         highlights: [
+          "SEO completo: el sitio llegó al 1.er lugar de Google en varias búsquedas.",
           "Catálogo con búsqueda por nombre, sigla o código entre 1.525 exámenes, incluso varios a la vez.",
           "Página de sedes con filtros por estado, ciudad y estado de atención: 27 sedes en 16 ciudades.",
           "SEO local con metadatos de geolocalización y páginas pensadas para cada ciudad del Cariri y de Pernambuco.",
