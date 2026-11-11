@@ -16,14 +16,14 @@ metadata:
 ---
 ```
 
-La `description` es lo que hace que la skill entre en el momento justo. Dice **cuándo** usarla, con los términos que un desarrollador usaría al pedir algo. Si pidió algo de Django, entra la convención de Django; si tocó datos personales, entra la de LGPD (la ley brasileña de protección de datos).
+La `description` es lo que hace que la skill entre en el momento justo. Dice **cuándo** usarla, con los términos que un desarrollador usaría al pedir algo. Si pides algo de Django, entra la convención de Django; si tocas datos personales, entra la de LGPD (la ley brasileña de protección de datos).
 
 Hoy son 20 skills: una por stack (Vite, Next.js, NestJS, Django, React Native, Python, Bun + Hono) y otras generales, como principios, LGPD, atomic design y proyecto existente. Cada una registra en `versao_verificada` la versión de la documentación oficial contra la que fue revisada. Cuando la biblioteca cambia, se puede saber qué regla necesita revisión.
 
 Algunas decisiones que tomé en el camino:
 
 - **El eje es el stack, no el proyecto.** Una convención que vale solo para un repositorio va en el `CLAUDE.md` de ese repositorio, no en Veritas.
-- **Política de tokens.** En el `SKILL.md` queda lo que se consulta todo el tiempo: prohibiciones, stack, el núcleo. El detalle va a archivos de apoyo al lado, que se cargan solo cuando el tema lo pide. Un `SKILL.md` de 20 KB o más reprueba en la prueba.
+- **Política de tokens.** En el `SKILL.md` queda lo que se consulta todo el tiempo: prohibiciones, stack, el núcleo. El detalle va a archivos de apoyo al lado, que se cargan solo cuando el tema lo pide. Un `SKILL.md` de 20 KB o más no pasa el test.
 - **Origen registrado.** Cada skill termina diciendo de dónde vino la regla y cuándo.
 
 ## Dentro del proyecto, no solo en el plugin
@@ -78,7 +78,7 @@ export async function answer<T>(given: T | undefined, flag: string, interactive:
 }
 ```
 
-Cuando falta una respuesta, el mensaje dice exactamente qué hacer: "Faltou resposta e o terminal não é interativo. Passe `--stack <vite|nextjs>`." (falta una respuesta y el terminal no es interactivo; pase la flag). Las flags lo cubren todo:
+Cuando falta una respuesta, el mensaje dice exactamente qué hacer: "Faltou resposta e o terminal não é interativo. Passe `--stack <vite|nextjs>`." (falta una respuesta y el terminal no es interactivo; pasa la flag). Las flags lo cubren todo:
 
 | Flag | Para |
 | --- | --- |
@@ -100,4 +100,4 @@ Dos ideas centrales de Veritas no son mías. Escribir las convenciones **dentro 
 - Una herramienta que escribe en archivos de otra persona tiene que ser idempotente desde el primer día.
 - Un valor por defecto silencioso es deuda. En una CLI usada por agentes, prefiere un error que diga qué flag pasar.
 
-El código está en [GitHub](https://github.com/Caiorhcp/veritas), bajo licencia MIT, y la documentación, con una página por skill, está en [veritasdev.vercel.app](https://veritasdev.vercel.app). Si encuentras una regla equivocada o que falta, un PR es bienvenido: las skills son Markdown, no hace falta saber programar.
+El código está en [GitHub](https://github.com/Caiorhcp/veritas), bajo licencia MIT, y la documentación, con una página por skill, está en [veritasdev.vercel.app](https://veritasdev.vercel.app/es). Si encuentras una regla equivocada o que falta, un PR es bienvenido: las skills son Markdown, no hace falta saber programar.

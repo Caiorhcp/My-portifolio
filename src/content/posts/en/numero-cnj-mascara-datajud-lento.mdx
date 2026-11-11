@@ -90,7 +90,7 @@ const data = await res.json().catch(() => ({}));
 
 ### A second attempt, and a counter
 
-In testing, a query repeated right after a `504` usually came back faster. So the front end retries on its own, once and only once:
+Datajud's delay varies from one query to the next, so a second attempt has a chance of coming back in time. That's why the front end retries on its own, once and only once:
 
 ```ts
 let r = await request(numero);
@@ -115,7 +115,7 @@ const cache = new Map<string, { at: number; instances: Instance[] }>();
 
 Errors don't go into the cache: a `429` now shouldn't block a query five minutes from now.
 
-The first idea was Next.js's `"use cache"` directive. It didn't work here. The Datajud code throws its own class, `DatajudError`, carrying the status and the friendly message, and the route uses `instanceof` to turn that into a response. Thrown from inside a function with `"use cache"`, the error arrived without its class, and the friendly message turned into a generic error. An in-memory `Map` solved it.
+The first idea was Next.js's `"use cache"` directive. It doesn't fit here. The Datajud code throws its own class, `DatajudError`, carrying the status and the friendly message, and the route uses `instanceof` to turn that into a response. Whatever leaves a `"use cache"` function goes through serialization, and the [Next.js docs](https://nextjs.org/docs/app/api-reference/directives/use-cache) list class instances among the things that aren't serializable. Thrown from inside it, the error loses the `DatajudError` class, the `instanceof` check fails and the friendly message turns into a generic error. An in-memory `Map` doesn't have that problem.
 
 The limit of that choice is written in a comment: the cache lives in each server instance and disappears when it gets recycled. If usage grows, the swap is to Redis or some other shared store.
 

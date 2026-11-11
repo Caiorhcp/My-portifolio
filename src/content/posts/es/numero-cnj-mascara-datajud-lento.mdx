@@ -90,7 +90,7 @@ const data = await res.json().catch(() => ({}));
 
 ### Un segundo intento, y un contador
 
-En las pruebas, una búsqueda repetida justo después de un `504` solía volver más rápido. Así que el front-end lo intenta una segunda vez por su cuenta, y solo una:
+La demora de Datajud varía de una consulta a otra, así que un segundo intento tiene posibilidades de volver a tiempo. Por eso el front-end lo intenta una segunda vez por su cuenta, y solo una:
 
 ```ts
 let r = await request(numero);
@@ -115,7 +115,7 @@ const cache = new Map<string, { at: number; instances: Instance[] }>();
 
 Los errores no entran en la caché: un `429` ahora no debería impedir una consulta dentro de cinco minutos.
 
-La primera idea fue la directiva `"use cache"`, de Next.js. Aquí no sirvió. El código de Datajud lanza una clase propia, `DatajudError`, con el status y el mensaje amigable, y la ruta usa `instanceof` para convertir eso en una respuesta. Lanzado desde dentro de una función con `"use cache"`, el error llegaba sin la clase, y el mensaje amigable se convertía en un error genérico. Un `Map` en memoria lo resolvió.
+La primera idea fue la directiva `"use cache"`, de Next.js. Aquí no sirve. El código de Datajud lanza una clase propia, `DatajudError`, con el status y el mensaje amigable, y la ruta usa `instanceof` para convertir eso en una respuesta. Lo que sale de una función con `"use cache"` pasa por serialización, y la [documentación de Next.js](https://nextjs.org/docs/app/api-reference/directives/use-cache) incluye las instancias de clase entre lo que no es serializable. Lanzado desde ahí dentro, el error pierde la clase `DatajudError`, el `instanceof` falla y el mensaje amigable se convierte en un error genérico. Un `Map` en memoria no tiene ese problema.
 
 El límite de esta elección está escrito en un comentario: la caché vive en cada instancia del servidor y desaparece cuando esta se recicla. Si el uso crece, el cambio es a Redis u otro almacenamiento compartido.
 

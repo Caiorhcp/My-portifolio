@@ -48,15 +48,15 @@ O Ponytail publica um plugin próprio. Então o marketplace do Veritas não guar
 
 ## O bug do SSH
 
-Na primeira versão, a entrada do Ponytail usava o atalho de GitHub do marketplace:
+Na primeira versão, a entrada do Ponytail usava a origem `github` do marketplace:
 
 ```json
 "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
 ```
 
-Para quem tem chave SSH configurada no GitHub, funcionava. Para quem não tem, a instalação falhava: por esse atalho, o repositório estava sendo clonado por SSH, e sem chave o `git clone` não passa da autenticação, mesmo com o repositório sendo público.
+Na minha máquina, que tem chave SSH no GitHub, funcionava. Numa máquina sem chave SSH, a instalação falhou com um erro de clone por SSH, mesmo com o repositório sendo público. A [documentação do Claude Code](https://code.claude.com/docs/en/plugins/host-marketplace) explica: numa origem `github`, ele pode clonar por SSH, e a instalação pelo `/plugin` dentro de uma sessão não volta sozinha para HTTPS quando falta a chave.
 
-A correção foi trocar para a origem por URL, com `https` explícito, como está no trecho acima. Repositório público por `https` não pede credencial nenhuma. Lição: teste a instalação numa máquina que não é a sua, ou pelo menos num usuário sem as suas chaves.
+A correção foi trocar para uma origem `url` com o endereço `https` explícito, como está no trecho acima. Com uma URL `https`, o clone é por HTTPS, e repositório público por HTTPS não pede credencial nenhuma. Lição: teste a instalação numa máquina que não é a sua, ou pelo menos num usuário sem as suas chaves.
 
 ## O Graphify vem empacotado, sem alterações
 

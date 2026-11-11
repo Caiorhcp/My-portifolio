@@ -48,15 +48,15 @@ Ponytail publica su propio plugin. Así que el marketplace de Veritas no guarda 
 
 ## El error del SSH
 
-En la primera versión, la entrada de Ponytail usaba el atajo de GitHub del marketplace:
+En la primera versión, la entrada de Ponytail usaba el origen `github` del marketplace:
 
 ```json
 "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
 ```
 
-Para quien tiene una clave SSH configurada en GitHub, funcionaba. Para quien no la tiene, la instalación fallaba: con ese atajo, el repositorio se clonaba por SSH, y sin clave el `git clone` no pasa de la autenticación, aunque el repositorio sea público.
+En mi máquina, que tiene clave SSH en GitHub, funcionaba. En una máquina sin clave SSH, la instalación falló con un error de clonado por SSH, aunque el repositorio es público. La [documentación de Claude Code](https://code.claude.com/docs/en/plugins/host-marketplace) explica por qué: con un origen `github` puede clonar por SSH, y la instalación con `/plugin` dentro de una sesión no vuelve sola a HTTPS cuando falta la clave.
 
-La corrección fue cambiar al origen por URL, con `https` explícito, como está en el fragmento de arriba. Un repositorio público por `https` no pide ninguna credencial. Lección: prueba la instalación en una máquina que no sea la tuya, o al menos con un usuario sin tus claves.
+La corrección fue cambiar a un origen `url` con la dirección `https` explícita, como está en el fragmento de arriba. Con una URL `https` el clonado va por HTTPS, y un repositorio público por HTTPS no pide ninguna credencial. Lección: prueba la instalación en una máquina que no sea la tuya, o al menos con un usuario sin tus claves.
 
 ## Graphify viene empaquetado, sin cambios
 
@@ -101,4 +101,4 @@ La frase que resume la skill está en ella misma: el grafo es una herramienta, n
 - Prueba la instalación sin tus credenciales.
 - Una herramienta potente necesita una regla de cuándo **no** usarla.
 
-Los créditos están en el [README de Veritas](https://github.com/Caiorhcp/veritas#créditos) y en el [sitio](https://veritasdev.vercel.app). Ponytail es de Dietrich Gebert; Graphify, de Graphify Labs. Si algo sale mal con alguno de ellos, el issue va al repositorio de cada uno.
+Los créditos están en el [README de Veritas](https://github.com/Caiorhcp/veritas#créditos) y en el [sitio](https://veritasdev.vercel.app/es). Ponytail es de Dietrich Gebert; Graphify, de Graphify Labs. Si algo sale mal con alguno de ellos, el issue va al repositorio de cada uno.

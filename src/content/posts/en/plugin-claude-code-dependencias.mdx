@@ -48,15 +48,15 @@ Ponytail publishes its own plugin. So the Veritas marketplace keeps no copy at a
 
 ## The SSH bug
 
-In the first version, the Ponytail entry used the marketplace's GitHub shortcut:
+In the first version, the Ponytail entry used the marketplace's `github` source:
 
 ```json
 "source": { "source": "github", "repo": "DietrichGebert/ponytail" }
 ```
 
-For anyone with an SSH key set up on GitHub, it worked. For anyone without one, installation failed: through that shortcut, the repository was being cloned over SSH, and without a key `git clone` doesn't get past authentication, even though the repository is public.
+On my machine, which has an SSH key on GitHub, it worked. On a machine without an SSH key, the install failed with an SSH clone error, even though the repository is public. The [Claude Code docs](https://code.claude.com/docs/en/plugins/host-marketplace) explain why: with a `github` source it may clone over SSH, and installing through `/plugin` inside a session doesn't fall back to HTTPS on its own when the key is missing.
 
-The fix was switching to a URL source, with explicit `https`, as in the snippet above. A public repository over `https` asks for no credentials at all. Lesson: test the installation on a machine that isn't yours, or at least as a user without your keys.
+The fix was switching to a `url` source with an explicit `https` address, as in the snippet above. With an `https` URL the clone goes over HTTPS, and a public repository over HTTPS asks for no credentials at all. Lesson: test the installation on a machine that isn't yours, or at least as a user without your keys.
 
 ## Graphify comes packaged, unchanged
 
@@ -101,4 +101,4 @@ The sentence that sums up the skill is in the skill itself: the graph is a tool,
 - Test the installation without your own credentials.
 - A powerful tool needs a rule for when **not** to use it.
 
-The credits are in the [Veritas README](https://github.com/Caiorhcp/veritas#créditos) and on the [website](https://veritasdev.vercel.app). Ponytail is by Dietrich Gebert; Graphify, by Graphify Labs. If something goes wrong with either of them, the issue belongs in each one's own repository.
+The credits are in the [Veritas README](https://github.com/Caiorhcp/veritas#créditos) and on the [website](https://veritasdev.vercel.app/en). Ponytail is by Dietrich Gebert; Graphify, by Graphify Labs. If something goes wrong with either of them, the issue belongs in each one's own repository.
