@@ -84,7 +84,7 @@ export const en: Dictionary = {
     services: [
       {
         title: "Websites and landing pages",
-        text: "Fast websites that look great on mobile, with full SEO to reach the top of Google: the Laboratório Vicente Lemos website reached #1 for several searches. Company pages, product or campaign landing pages, blogs.",
+        text: "Fast websites that look great on mobile, with full SEO to reach the top of Google: the Laboratório Vicente Lemos website is #1 for several searches, including “laboratórios Cariri” (Cariri labs). Company pages, product or campaign landing pages, blogs.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Get a website quote",
       },

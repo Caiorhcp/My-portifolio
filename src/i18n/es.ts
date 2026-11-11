@@ -84,7 +84,7 @@ export const es: Dictionary = {
     services: [
       {
         title: "Sitios web y landing pages",
-        text: "Sitios rápidos, bonitos en el móvil y con SEO completo para llegar a lo más alto de Google: el del Laboratório Vicente Lemos alcanzó el 1.er lugar en varias búsquedas. Página de la empresa, landing page de producto o campaña, blog.",
+        text: "Sitios rápidos, bonitos en el móvil y con SEO completo para llegar a lo más alto de Google: el del Laboratório Vicente Lemos es el 1.º en varias búsquedas, incluida “laboratórios Cariri” (laboratorios Cariri). Página de la empresa, landing page de producto o campaña, blog.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Pedir presupuesto de sitio web",
       },

@@ -83,7 +83,7 @@ export const pt = {
     services: [
       {
         title: "Sites e landing pages",
-        text: "Sites rápidos, bonitos no celular e com SEO completo para chegar ao topo do Google: o do Laboratório Vicente Lemos alcançou o 1º lugar em várias pesquisas. Página da empresa, landing page de produto ou campanha, blog.",
+        text: "Sites rápidos, bonitos no celular e com SEO completo para chegar ao topo do Google: o do Laboratório Vicente Lemos é o 1º em várias pesquisas, inclusive “laboratórios Cariri”. Página da empresa, landing page de produto ou campanha, blog.",
         stack: "Next.js · React · Tailwind CSS",
         action: "Pedir orçamento de site",
       },
