@@ -134,8 +134,8 @@ export const PROJECTS: Project[] = [
       pt: {
         tagline: "Site de uma rede de laboratórios do Cariri",
         description:
-          "Site do Laboratório Vicente Lemos, rede de análises clínicas com 27 unidades no Cariri cearense e no sertão de Pernambuco. Reúne campanhas, catálogo de exames com busca, unidades com horários e filtros, o plano Mais Saúde e o caminho para os laudos online, com SEO local para cada cidade atendida.",
-        role: "Desenvolvimento do site",
+          "Feito na Ponto Env, empresa onde trabalho: desenhei e desenvolvi o site inteiro sozinho. Site do Laboratório Vicente Lemos, rede de análises clínicas com 27 unidades no Cariri cearense e no sertão de Pernambuco. Reúne campanhas, catálogo de exames com busca, unidades com horários e filtros, o plano Mais Saúde e o caminho para os laudos online, com SEO local para cada cidade atendida.",
+        role: "Site inteiro, do design ao código, feito por mim na Ponto Env",
         highlights: [
           "SEO completo: o site chegou ao 1º lugar do Google em várias pesquisas, inclusive na principal do setor na região, \"laboratórios Cariri\".",
           "Catálogo com busca por nome, sigla ou código entre 1.525 exames, inclusive vários de uma vez.",
@@ -156,8 +156,8 @@ export const PROJECTS: Project[] = [
       en: {
         tagline: "Website for a network of medical labs in northeastern Brazil",
         description:
-          "Website for Laboratório Vicente Lemos, a clinical lab network with 27 locations in the Cariri region of Ceará and the backlands of Pernambuco, Brazil. It brings together campaigns, a searchable test catalog, locations with opening hours and filters, the Mais Saúde plan and access to online results, with local SEO for every city served.",
-        role: "Website development",
+          "Built at Ponto Env, where I work: I designed and developed the entire website myself. Website for Laboratório Vicente Lemos, a clinical lab network with 27 locations in the Cariri region of Ceará and the backlands of Pernambuco, Brazil. It brings together campaigns, a searchable test catalog, locations with opening hours and filters, the Mais Saúde plan and access to online results, with local SEO for every city served.",
+        role: "Entire website, from design to code, built by me at Ponto Env",
         highlights: [
           "Full SEO: the website reached #1 on Google for several searches, including the main one for its field in the region, \"laboratórios Cariri\" (Cariri labs).",
           "Catalog with search by name, abbreviation or code across 1,525 lab tests, including several at once.",
@@ -179,8 +179,8 @@ export const PROJECTS: Project[] = [
       es: {
         tagline: "Sitio web de una red de laboratorios del nordeste de Brasil",
         description:
-          "Sitio web del Laboratório Vicente Lemos, red de análisis clínicos con 27 sedes en la región del Cariri, en Ceará, y en el interior de Pernambuco, Brasil. Reúne campañas, un catálogo de exámenes con buscador, sedes con horarios y filtros, el plan Mais Saúde y el acceso a los resultados en línea, con SEO local para cada ciudad atendida.",
-        role: "Desarrollo del sitio web",
+          "Hecho en Ponto Env, la empresa donde trabajo: diseñé y desarrollé todo el sitio yo solo. Sitio web del Laboratório Vicente Lemos, red de análisis clínicos con 27 sedes en la región del Cariri, en Ceará, y en el interior de Pernambuco, Brasil. Reúne campañas, un catálogo de exámenes con buscador, sedes con horarios y filtros, el plan Mais Saúde y el acceso a los resultados en línea, con SEO local para cada ciudad atendida.",
+        role: "Sitio completo, del diseño al código, hecho por mí en Ponto Env",
         highlights: [
           "SEO completo: el sitio llegó al 1.er lugar de Google en varias búsquedas, incluida la principal del sector en la región, \"laboratórios Cariri\" (laboratorios Cariri).",
           "Catálogo con búsqueda por nombre, sigla o código entre 1.525 exámenes, incluso varios a la vez.",
