@@ -75,13 +75,13 @@ Además de aplicar las convenciones, la extensión tiene un panel en la barra la
 
 No tiene telemetría. Todo se escribe en el disco, en la carpeta del proyecto. El empaquetado se hace con esbuild, que junta la extensión y el código de la CLI en un único archivo.
 
-## Distribución: manual, por ahora
+## Distribución: manual
 
-El camino natural sería publicar en el VS Code Marketplace y en Open VSX (de donde instalan Cursor, Windsurf y VSCodium). Eso todavía no pasó. Mientras tanto, el `.vsix` está en una [página de descarga en el sitio de Veritas](https://veritasdev.vercel.app/es/extensao), con versión, tamaño y el SHA-256 para verificar el archivo, y el paso a paso de instalación en cada editor.
+El camino más común sería publicar en el VS Code Marketplace y en Open VSX (de donde instalan Cursor, Windsurf y VSCodium). Preferí no usar una tienda: el `.vsix` está en una [página de descarga en el sitio de Veritas](https://veritasdev.vercel.app/es/extensao), con versión, tamaño y el SHA-256 para verificar el archivo, y el paso a paso de instalación en cada editor.
 
 ![Página de la extensión en el sitio de Veritas, con el botón para descargar el .vsix](/img/veritas-extensao.webp)
 
-No es lo ideal: sin marketplace no hay actualización automática. Pero es honesto y funciona hoy.
+El costo es que no hay actualización automática: las versiones nuevas aparecen en esa página y se reinstala a mano.
 
 ## Lo que queda
 

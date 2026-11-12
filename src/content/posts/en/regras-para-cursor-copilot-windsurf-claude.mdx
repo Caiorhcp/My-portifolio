@@ -75,13 +75,13 @@ Besides applying the conventions, the extension has a sidebar panel with the ski
 
 It has no telemetry. Everything is written to disk, inside the project folder. Packaging is done with esbuild, which bundles the extension and the CLI code into a single file.
 
-## Distribution: manual, for now
+## Distribution: manual
 
-The natural path would be publishing on the VS Code Marketplace and on Open VSX (which is where Cursor, Windsurf and VSCodium install from). That hasn't happened yet. Meanwhile, the `.vsix` sits on a [download page on the Veritas website](https://veritasdev.vercel.app/en/extensao), with the version, size and SHA-256 to verify the file, plus step-by-step installation for each editor.
+The usual path would be publishing on the VS Code Marketplace and on Open VSX (which is where Cursor, Windsurf and VSCodium install from). I chose not to use a store: the `.vsix` sits on a [download page on the Veritas website](https://veritasdev.vercel.app/en/extensao), with the version, size and SHA-256 to verify the file, plus step-by-step installation for each editor.
 
 ![Extension page on the Veritas website, with the button to download the .vsix](/img/veritas-extensao.webp)
 
-It's not ideal: without a marketplace, there are no automatic updates. But it's honest, and it works today.
+The trade-off is no automatic updates: new versions show up on that page and you reinstall by hand.
 
 ## Takeaways
 
